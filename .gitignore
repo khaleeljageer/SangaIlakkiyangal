@@ -46,6 +46,8 @@ captures/
 .idea/modules.xml
 .idea/navEditor.xml
 .idea/runConfigurations.xml
+.idea/inspectionProfiles/
+.idea/inspectionProfiles/Project_Default.xml
 
 .DS_Store
 
