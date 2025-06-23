@@ -13,18 +13,18 @@ import com.jskaleel.sangaelakkiyangal.ui.screens.welcome.WelcomeViewModel
 fun NavigationHost(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = Route.AboutApp.name
+        startDestination = Route.Welcome.name
     ) {
         navigation(
-            startDestination = Screen.AboutApp.route,
-            route = Route.AboutApp.name
+            startDestination = Screen.Welcome.AboutApp.route,
+            route = Route.Welcome.name
         ) {
-            composable(route = Screen.AboutApp.route) {
+            composable(route = Screen.Welcome.AboutApp.route) {
                 val viewModel: WelcomeViewModel = hiltViewModel()
                 WelcomeScreenRoute(
                     onNext = {
                         navController.navigate(Route.Main.name) {
-                            popUpTo(Route.AboutApp.name) {
+                            popUpTo(Route.Welcome.name) {
                                 inclusive = true
                             }
                         }

@@ -73,8 +73,11 @@ dependencies {
     // PDF Viewer
     implementation(libs.pdf.viewer)
 
-    //DataStore
+    // DataStore
     implementation(libs.androidx.datastore.preferences)
+
+    // Lottie
+    implementation(libs.lottie.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

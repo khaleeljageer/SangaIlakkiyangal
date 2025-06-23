@@ -77,7 +77,7 @@ fun WelcomeScreenContent(
 
 @Preview(showBackground = true)
 @Composable
-private fun HomeScreenContentPreView() {
+private fun WelcomeScreenContentPreView() {
     AppTheme {
         WelcomeScreenContent(
             event = {}
