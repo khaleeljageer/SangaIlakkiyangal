@@ -1,0 +1,88 @@
+package com.jskaleel.sangaelakkiyangal.ui.screens.welcome
+
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.jskaleel.sangaelakkiyangal.domain.usecase.WelcomeUseCase
+import com.jskaleel.sangaelakkiyangal.ui.utils.mutableNavigationState
+import com.jskaleel.sangaelakkiyangal.ui.utils.navigate
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class WelcomeViewModel @Inject constructor(
+    private val useCase: WelcomeUseCase
+) : ViewModel() {
+
+    var navigation by mutableNavigationState<WelcomeNavigationState>()
+        private set
+
+    private val viewModelState = MutableStateFlow(WelcomeViewModelState())
+
+    val uiState = viewModelState.map { it.toUiState() }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = viewModelState.value.toUiState()
+        )
+
+    init {
+        viewModelScope.launch {
+            if (useCase.getWelcomeShown().first()) {
+                delay(2000)
+                navigation = navigate(WelcomeNavigationState.Next)
+            } else {
+                delay(2000)
+                viewModelState.update {
+                    it.copy(loading = false)
+                }
+            }
+        }
+    }
+
+    fun onEvent(event: WelcomeEvent) {
+        when (event) {
+            WelcomeEvent.NextClicked -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    useCase.setWelcomeShown()
+                }
+                navigation = navigate(WelcomeNavigationState.Next)
+            }
+        }
+    }
+}
+
+private data class WelcomeViewModelState(
+    val loading: Boolean = true,
+) {
+    fun toUiState(): WelcomeUiState {
+        return if (loading) {
+            WelcomeUiState.Loading
+        } else {
+            WelcomeUiState.Success
+        }
+    }
+}
+
+sealed interface WelcomeUiState {
+    data object Loading : WelcomeUiState
+    data object Success : WelcomeUiState
+}
+
+sealed interface WelcomeNavigationState {
+    data object Next : WelcomeNavigationState
+}
+
+sealed interface WelcomeEvent {
+    data object NextClicked : WelcomeEvent
+}

@@ -1,12 +1,12 @@
 package com.jskaleel.sangaelakkiyangal.ui.navigation
 
 sealed class Screen(val route: String) {
-    object Download : Screen("download")
-    object Home : Screen("home")
-    object AboutApp : Screen("about_app")
+    data object Download : Screen("download")
+    data object Home : Screen("home")
+    data object AboutApp : Screen("about_app")
 }
 
 sealed class Route(val name: String) {
-    object AboutApp : Route("Route_AboutApp")
-    object Main : Route("Route_Main")
+    data object AboutApp : Route("Route_AboutApp")
+    data object Main : Route("Route_Main")
 }

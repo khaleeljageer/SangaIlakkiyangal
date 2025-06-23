@@ -8,7 +8,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 
 sealed class NavigationState<out T> {
     data class Navigate<T>(val data: T, var isConsumed: Boolean = false) : NavigationState<T>()
-    object DoNothing : NavigationState<Nothing>()
+    data object DoNothing : NavigationState<Nothing>()
 }
 
 fun <T> mutableNavigationState() = mutableStateOf<NavigationState<T>>(NavigationState.DoNothing)

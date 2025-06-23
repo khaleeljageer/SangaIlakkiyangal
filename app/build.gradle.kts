@@ -73,6 +73,9 @@ dependencies {
     // PDF Viewer
     implementation(libs.pdf.viewer)
 
+    //DataStore
+    implementation(libs.androidx.datastore.preferences)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

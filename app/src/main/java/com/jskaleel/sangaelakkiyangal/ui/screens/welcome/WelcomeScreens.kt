@@ -1,4 +1,4 @@
-package com.jskaleel.sangaelakkiyangal.ui.screens.aboutapp
+package com.jskaleel.sangaelakkiyangal.ui.screens.welcome
 
 import android.annotation.SuppressLint
 import android.view.ViewGroup
@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -18,21 +17,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
-import com.jskaleel.sangaelakkiyangal.core.CallBack
 import com.jskaleel.sangaelakkiyangal.ui.theme.AppTheme
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun AboutAppScreenContent(
-    onNextClicked: CallBack
+fun WelcomeScreenContent(
+    event: (WelcomeEvent) -> Unit,
 ) {
     Scaffold(
         topBar = {},
         floatingActionButton = {
             FloatingActionButton(
-                onClick = onNextClicked,
+                onClick = {
+                    event(WelcomeEvent.NextClicked)
+                },
                 containerColor = Color(0xFF8B5E3C),
                 contentColor = Color.White
             ) {
@@ -78,8 +77,8 @@ fun AboutAppScreenContent(
 @Composable
 private fun HomeScreenContentPreView() {
     AppTheme {
-        AboutAppScreenContent(
-            onNextClicked = {}
+        WelcomeScreenContent(
+            event = {}
         )
     }
 }

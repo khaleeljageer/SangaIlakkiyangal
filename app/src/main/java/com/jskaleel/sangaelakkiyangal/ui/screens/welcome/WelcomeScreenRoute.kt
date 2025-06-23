@@ -1,4 +1,4 @@
-package com.jskaleel.sangaelakkiyangal.ui.screens.aboutapp
+package com.jskaleel.sangaelakkiyangal.ui.screens.welcome
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -8,23 +8,23 @@ import com.jskaleel.sangaelakkiyangal.ui.screens.common.FullScreenLoader
 import com.jskaleel.sangaelakkiyangal.ui.utils.consume
 
 @Composable
-fun AboutAppScreenRoute(
+fun WelcomeScreenRoute(
     onNext: CallBack,
-    viewModel: AboutAppViewModel
+    viewModel: WelcomeViewModel
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     viewModel.navigation.consume { state ->
         when (state) {
-            AboutAppNavigationState.Next -> onNext()
+            WelcomeNavigationState.Next -> onNext()
         }
     }
 
     when (uiState) {
-        AboutAppUiState.Loading -> FullScreenLoader()
-        AboutAppUiState.Success -> {
-            AboutAppScreenContent(
-                onNextClicked = { }
+        WelcomeUiState.Loading -> FullScreenLoader()
+        is WelcomeUiState.Success -> {
+            WelcomeScreenContent(
+                event = viewModel::onEvent
             )
         }
     }
