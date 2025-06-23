@@ -6,6 +6,7 @@ import android.webkit.WebView
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material3.FloatingActionButton
@@ -32,6 +33,7 @@ fun WelcomeScreenContent(
                 onClick = {
                     event(WelcomeEvent.NextClicked)
                 },
+                shape = CircleShape,
                 containerColor = Color(0xFF8B5E3C),
                 contentColor = Color.White
             ) {

@@ -39,10 +39,10 @@ class WelcomeViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             if (useCase.getWelcomeShown().first()) {
-                delay(2000)
+                delay(SCREEN_DELAY)
                 navigation = navigate(WelcomeNavigationState.Next)
             } else {
-                delay(2000)
+                delay(SCREEN_DELAY)
                 viewModelState.update {
                     it.copy(loading = false)
                 }
@@ -59,6 +59,10 @@ class WelcomeViewModel @Inject constructor(
                 navigation = navigate(WelcomeNavigationState.Next)
             }
         }
+    }
+
+    companion object {
+        private const val SCREEN_DELAY = 1500L
     }
 }
 
