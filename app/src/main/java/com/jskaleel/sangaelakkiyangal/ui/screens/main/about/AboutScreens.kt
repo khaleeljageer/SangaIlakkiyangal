@@ -29,7 +29,7 @@ fun AboutScreenContent() {
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT
                     )
-                    settings.javaScriptEnabled = true
+                    settings.javaScriptEnabled = false
                     settings.allowFileAccess = true
                     settings.loadWithOverviewMode = true
                     settings.useWideViewPort = true
