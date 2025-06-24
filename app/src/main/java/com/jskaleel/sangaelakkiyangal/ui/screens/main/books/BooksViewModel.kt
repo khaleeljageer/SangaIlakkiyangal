@@ -1,5 +1,6 @@
 package com.jskaleel.sangaelakkiyangal.ui.screens.main.books
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -10,6 +11,9 @@ import com.jskaleel.sangaelakkiyangal.core.model.onSuccess
 import com.jskaleel.sangaelakkiyangal.domain.model.Book
 import com.jskaleel.sangaelakkiyangal.domain.model.Category
 import com.jskaleel.sangaelakkiyangal.domain.usecase.BooksUseCase
+import com.jskaleel.sangaelakkiyangal.ui.screens.main.booklist.BookListUiModel
+import com.jskaleel.sangaelakkiyangal.ui.screens.main.books.BooksNavigationState.Next
+import com.jskaleel.sangaelakkiyangal.ui.screens.main.books.BooksNavigationState.OpenBook
 import com.jskaleel.sangaelakkiyangal.ui.utils.mutableNavigationState
 import com.jskaleel.sangaelakkiyangal.ui.utils.navigate
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,6 +43,7 @@ class BooksViewModel @Inject constructor(
         )
 
     init {
+        Log.d("BooksViewModel", "init")
         fetchBooks()
     }
 
@@ -82,7 +87,7 @@ class BooksViewModel @Inject constructor(
     fun onEvent(event: BooksEvent) {
         when (event) {
             BooksEvent.OnBookClick -> {
-                navigation = navigate(BooksNavigationState.OpenBook(id = "book_id"))
+                navigation = navigate(OpenBook(id = "book_id"))
             }
 
             is BooksEvent.OnCategoryToggle -> {
@@ -93,11 +98,33 @@ class BooksViewModel @Inject constructor(
             }
 
             is BooksEvent.OnSubCategoryClick -> {
-                val subCategory: List<Book> = viewModelState.value.categories
-                    .flatMap { it.subCategories }
-                    .firstOrNull { it.title == event.title }
-                    ?.books.orEmpty()
+                navigation = navigate(Next(title = event.title))
             }
+
+            BooksEvent.OnBackClick -> {
+
+            }
+        }
+    }
+
+    fun setSubCategory(selectedSubCategory: String) {
+        val subCategory = viewModelState.value.categories
+            .flatMap { it.subCategories }
+            .firstOrNull { it.title == selectedSubCategory }
+            ?.books.orEmpty()
+
+        Log.d("BooksViewModel", "${viewModelState.value.categories.size}")
+        Log.d("BooksViewModel", "setSubCategory: $selectedSubCategory, books: ${subCategory.size}")
+
+        viewModelState.update { state ->
+            state.copy(
+                selectedSubCategoryBooks = subCategory
+            )
+        }
+        viewModelState.update { state ->
+            state.copy(
+                selectedSubCategory = selectedSubCategory
+            )
         }
     }
 }
@@ -106,6 +133,8 @@ private data class BooksViewModelState(
     val loading: Boolean = true,
     val categories: List<Category> = emptyList(),
     val toggleIndex: Int = 0,
+    val selectedSubCategory: String = "",
+    val selectedSubCategoryBooks: List<Book> = emptyList()
 ) {
     fun toUiState(): BooksUiState {
         return if (loading) {
@@ -125,6 +154,14 @@ private data class BooksViewModelState(
                                 )
                             }
                         )
+                    },
+                    selectedSubCategory = selectedSubCategory,
+                    selectedSubCategoryBooks = selectedSubCategoryBooks.map {
+                        BookListUiModel(
+                            title = it.title,
+                            id = it.id,
+                            url = it.url
+                        )
                     }
                 )
             }
@@ -135,14 +172,20 @@ private data class BooksViewModelState(
 sealed interface BooksUiState {
     data object Loading : BooksUiState
     data object Empty : BooksUiState
-    data class Success(val categories: List<CategoryUiModel>) : BooksUiState
+    data class Success(
+        val categories: List<CategoryUiModel>,
+        val selectedSubCategory: String,
+        val selectedSubCategoryBooks: List<BookListUiModel> = emptyList()
+    ) : BooksUiState
 }
 
 sealed interface BooksNavigationState {
+    data class Next(val title: String) : BooksNavigationState
     data class OpenBook(val id: String) : BooksNavigationState
 }
 
 sealed interface BooksEvent {
+    data object OnBackClick : BooksEvent
     data object OnBookClick : BooksEvent
     data class OnCategoryToggle(val index: Int) : BooksEvent
     data class OnSubCategoryClick(val title: String) : BooksEvent
