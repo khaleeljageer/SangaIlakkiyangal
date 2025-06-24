@@ -10,11 +10,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -22,6 +27,7 @@ import com.jskaleel.sangaelakkiyangal.ui.model.BottomBarItem
 import com.jskaleel.sangaelakkiyangal.ui.navigation.NavigationHost
 import com.jskaleel.sangaelakkiyangal.ui.navigation.Screen
 import com.jskaleel.sangaelakkiyangal.ui.theme.AppTheme
+import com.jskaleel.sangaelakkiyangal.ui.theme.fontFamily
 import com.jskaleel.sangaelakkiyangal.ui.utils.BottomNavigationBar
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -47,6 +53,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MainNavigation() {
     val navController = rememberNavController()
@@ -73,6 +80,18 @@ private fun MainNavigation() {
     val showBottomBar = bottomBarItems.any { it.route in currentRoute.orEmpty() }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        topBar = {
+            if (showBottomBar) {
+                TopAppBar(title = {
+                    Text(
+                        text = stringResource(R.string.ta_app_name),
+                        fontFamily = fontFamily,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                })
+            }
+        },
         bottomBar = {
             if (showBottomBar) {
                 BottomNavigationBar(

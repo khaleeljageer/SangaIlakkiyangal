@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,12 +12,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ExpandLess
 import androidx.compose.material.icons.rounded.ExpandMore
-import androidx.compose.material3.ElevatedSuggestionChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
@@ -29,6 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.jskaleel.sangaelakkiyangal.core.CallBack
+import com.jskaleel.sangaelakkiyangal.core.StringCallBack
 
 @Composable
 fun BooksScreenContent(
@@ -47,7 +46,9 @@ fun BooksScreenContent(
                 onToggleExpand = {
                     event.invoke(BooksEvent.OnCategoryToggle(index))
                 },
-                onSubCategoryClick = { }
+                onSubCategoryClick = {
+                    event.invoke(BooksEvent.OnSubCategoryClick(it))
+                }
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -65,10 +66,10 @@ fun BooksEmptyScreen() {
 }
 
 @Composable
-fun ExpandableCategorySection(
+private fun ExpandableCategorySection(
     category: CategoryUiModel,
-    onToggleExpand: () -> Unit,
-    onSubCategoryClick: () -> Unit
+    onToggleExpand: CallBack,
+    onSubCategoryClick: StringCallBack
 ) {
     Column(
         modifier = Modifier
@@ -78,15 +79,14 @@ fun ExpandableCategorySection(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { onToggleExpand() }
-                .padding(vertical = 8.dp),
+                .clickable { onToggleExpand() },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = category.title,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.SemiBold
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                color = MaterialTheme.colorScheme.onBackground
             )
             Icon(
                 imageVector = if (category.isExpanded) Icons.Rounded.ExpandLess else Icons.Rounded.ExpandMore,
@@ -100,7 +100,10 @@ fun ExpandableCategorySection(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 category.subCategories.forEach {
-                    SubCategoryItem(subCategory = it, onClick = onSubCategoryClick)
+                    SubCategoryItem(
+                        subCategory = it,
+                        onClick = onSubCategoryClick
+                    )
                 }
             }
         }
@@ -108,13 +111,17 @@ fun ExpandableCategorySection(
 }
 
 @Composable
-private fun SubCategoryItem(subCategory: SubCategoryUiModel, onClick: () -> Unit) {
+private fun SubCategoryItem(
+    subCategory: SubCategoryUiModel,
+    onClick: StringCallBack
+) {
     SuggestionChip(
-        onClick = {},
+        onClick = { onClick(subCategory.title) },
         label = {
             Text(
                 text = subCategory.title,
                 style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.primary
             )
         }
     )

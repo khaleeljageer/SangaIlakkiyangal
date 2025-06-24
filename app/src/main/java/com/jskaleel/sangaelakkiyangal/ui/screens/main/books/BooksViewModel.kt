@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.jskaleel.sangaelakkiyangal.core.model.getOrNull
 import com.jskaleel.sangaelakkiyangal.core.model.onError
 import com.jskaleel.sangaelakkiyangal.core.model.onSuccess
+import com.jskaleel.sangaelakkiyangal.domain.model.Book
 import com.jskaleel.sangaelakkiyangal.domain.model.Category
 import com.jskaleel.sangaelakkiyangal.domain.usecase.BooksUseCase
 import com.jskaleel.sangaelakkiyangal.ui.utils.mutableNavigationState
@@ -90,6 +91,13 @@ class BooksViewModel @Inject constructor(
                     state.copy(toggleIndex = newToggleIndex)
                 }
             }
+
+            is BooksEvent.OnSubCategoryClick -> {
+                val subCategory: List<Book> = viewModelState.value.categories
+                    .flatMap { it.subCategories }
+                    .firstOrNull { it.title == event.title }
+                    ?.books.orEmpty()
+            }
         }
     }
 }
@@ -137,4 +145,5 @@ sealed interface BooksNavigationState {
 sealed interface BooksEvent {
     data object OnBookClick : BooksEvent
     data class OnCategoryToggle(val index: Int) : BooksEvent
+    data class OnSubCategoryClick(val title: String) : BooksEvent
 }
