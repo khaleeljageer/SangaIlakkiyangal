@@ -1,4 +1,4 @@
-package com.jskaleel.sangaelakkiyangal.data.local.datastore
+package com.jskaleel.sangaelakkiyangal.data.source.datastore
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -25,7 +25,7 @@ class UserPreferencesDataStore @Inject constructor(
 
     fun isWelcomeShown(): Flow<Boolean> {
         return dataStore.data.map { preferences ->
-            preferences[IS_WELCOME_SHOWN] ?: false
+            preferences[IS_WELCOME_SHOWN] == true
         }
     }
 }

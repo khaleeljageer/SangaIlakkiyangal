@@ -1,6 +1,6 @@
 package com.jskaleel.sangaelakkiyangal.data.repository
 
-import com.jskaleel.sangaelakkiyangal.data.local.datastore.UserPreferencesDataStore
+import com.jskaleel.sangaelakkiyangal.data.source.datastore.UserPreferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

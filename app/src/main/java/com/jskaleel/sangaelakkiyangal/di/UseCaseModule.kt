@@ -1,5 +1,7 @@
 package com.jskaleel.sangaelakkiyangal.di
 
+import com.jskaleel.sangaelakkiyangal.domain.usecase.BooksUseCase
+import com.jskaleel.sangaelakkiyangal.domain.usecase.BooksUseCaseImpl
 import com.jskaleel.sangaelakkiyangal.domain.usecase.WelcomeUseCase
 import com.jskaleel.sangaelakkiyangal.domain.usecase.WelcomeUseCaseImpl
 import dagger.Binds
@@ -17,4 +19,10 @@ abstract class UseCaseModule {
     abstract fun getWelcomeUseCase(
         useCase: WelcomeUseCaseImpl,
     ): WelcomeUseCase
+
+    @Binds
+    @Singleton
+    abstract fun getBooksUseCase(
+        useCase: BooksUseCaseImpl,
+    ): BooksUseCase
 }
