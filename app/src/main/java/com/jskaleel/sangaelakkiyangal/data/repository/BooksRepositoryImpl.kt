@@ -11,6 +11,10 @@ class BooksRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
     private val networkManager: NetworkManager
 ) : BooksRepository {
+    override suspend fun syncAll() {
+
+    }
+
     override suspend fun fetchCategories(): ResultState<List<CategoryDTO>> {
         return networkManager.safeApiCall {
             apiService.getCategories()

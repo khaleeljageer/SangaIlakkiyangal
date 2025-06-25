@@ -43,7 +43,6 @@ class BooksViewModel @Inject constructor(
         )
 
     init {
-        Log.d("BooksViewModel", "init")
         fetchBooks()
     }
 

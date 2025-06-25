@@ -10,7 +10,7 @@ import com.jskaleel.sangaelakkiyangal.R
 
 // Set of Material typography styles to start with
 val fontFamily = FontFamily(
-    Font(R.font.aazhi)
+    Font(R.font.marutham)
 )
 val Typography = Typography(
     bodyLarge = TextStyle(
