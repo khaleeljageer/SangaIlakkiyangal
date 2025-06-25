@@ -68,7 +68,8 @@ private data class BookListViewModelState(
                     BookUiModel(
                         title = it.title,
                         id = it.id,
-                        url = it.url
+                        url = it.url,
+                        downloaded = false
                     )
                 }
             )

@@ -2,6 +2,7 @@ package com.jskaleel.sangaelakkiyangal.ui.navigation
 
 import android.os.Bundle
 
+
 sealed class Screen(val route: String) {
     object Welcome {
         data object AboutApp : Screen("welcome_about_app")

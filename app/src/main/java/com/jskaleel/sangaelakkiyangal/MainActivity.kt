@@ -12,25 +12,21 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.jskaleel.sangaelakkiyangal.ui.navigation.NavigationHost
 import com.jskaleel.sangaelakkiyangal.ui.theme.AppTheme
-import com.jskaleel.sangaelakkiyangal.ui.theme.fontFamily
 import com.jskaleel.sangaelakkiyangal.ui.utils.BottomNavigationBar
+import com.jskaleel.sangaelakkiyangal.ui.utils.ContentAwareTopAppBar
 import com.jskaleel.sangaelakkiyangal.ui.utils.bottomBarItems
+import com.jskaleel.sangaelakkiyangal.ui.utils.topBarItems
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -64,22 +60,18 @@ private fun MainNavigation() {
 
     // Show bottom bar only on home screen
     val showBottomBar = bottomBarItems.any { it.route in currentRoute.orEmpty() }
+    val showTopAppBar = topBarItems.any { it.route in currentRoute.orEmpty() }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             AnimatedVisibility(
-                visible = showBottomBar,
+                visible = showTopAppBar,
                 enter = fadeIn() + expandVertically(),
                 exit = shrinkVertically() + fadeOut()
             ) {
-                TopAppBar(title = {
-                    Text(
-                        text = stringResource(R.string.ta_app_name),
-                        fontFamily = fontFamily,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                })
+                ContentAwareTopAppBar(
+                    navController = navController,
+                )
             }
         },
         bottomBar = {

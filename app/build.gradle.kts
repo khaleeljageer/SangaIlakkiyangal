@@ -9,13 +9,12 @@ plugins {
 
 android {
     namespace = "com.jskaleel.sangaelakkiyangal"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.jskaleel.sangaelakkiyangal"
         minSdk = 26
-        //noinspection OldTargetApi
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 

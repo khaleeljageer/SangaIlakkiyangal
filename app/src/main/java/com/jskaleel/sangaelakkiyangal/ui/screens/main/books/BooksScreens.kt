@@ -25,16 +25,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.jskaleel.sangaelakkiyangal.R
 import com.jskaleel.sangaelakkiyangal.core.CallBack
 import com.jskaleel.sangaelakkiyangal.core.StringCallBack
+import com.jskaleel.sangaelakkiyangal.ui.theme.fontFamily
+import com.jskaleel.sangaelakkiyangal.ui.utils.ProvideAppBarTitle
 
 @Composable
 fun BooksScreenContent(
     event: (BooksEvent) -> Unit,
     categories: List<CategoryUiModel>
 ) {
+    ProvideAppBarTitle {
+        Text(
+            text = stringResource(R.string.ta_app_name),
+            fontFamily = fontFamily,
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),,
+        )
+    }
 
     LazyColumn(
         modifier = Modifier
