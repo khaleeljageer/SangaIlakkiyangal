@@ -1,12 +1,12 @@
 package com.jskaleel.sangaelakkiyangal.data.repository
 
-import com.jskaleel.sangaelakkiyangal.core.model.ResultState
-import com.jskaleel.sangaelakkiyangal.data.model.CategoryDTO
-import com.jskaleel.sangaelakkiyangal.data.model.SubCategoryDTO
 import com.jskaleel.sangaelakkiyangal.domain.model.Category
+import com.jskaleel.sangaelakkiyangal.domain.model.SubCategory
+import kotlinx.coroutines.flow.Flow
 
 interface BooksRepository {
-    suspend fun syncAll()
-    suspend fun fetchCategories(): ResultState<List<CategoryDTO>>
-    suspend fun fetchSubCategories(url: String): ResultState<List<SubCategoryDTO>>
+    suspend fun syncIfNeeded()
+    suspend fun observeCategories(): Flow<List<Category>>
+    suspend fun observeSubCategories(url: String): Flow<List<SubCategory>>
+    suspend fun observeBooks(url: String): Flow<List<SubCategory>>
 }

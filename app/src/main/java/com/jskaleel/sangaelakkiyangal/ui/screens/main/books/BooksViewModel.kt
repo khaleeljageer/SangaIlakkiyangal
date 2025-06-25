@@ -5,9 +5,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jskaleel.sangaelakkiyangal.core.model.getOrNull
-import com.jskaleel.sangaelakkiyangal.core.model.onError
-import com.jskaleel.sangaelakkiyangal.core.model.onSuccess
 import com.jskaleel.sangaelakkiyangal.domain.model.Book
 import com.jskaleel.sangaelakkiyangal.domain.model.Category
 import com.jskaleel.sangaelakkiyangal.domain.usecase.BooksUseCase
@@ -43,44 +40,47 @@ class BooksViewModel @Inject constructor(
         )
 
     init {
-        fetchBooks()
+        syncBooks()
+        observeCategories()
+        observeSubCategories()
     }
 
-    private fun fetchBooks() {
+    private fun observeSubCategories() {
+
+    }
+
+    private fun observeCategories() {
         viewModelScope.launch(Dispatchers.IO) {
-            useCase.fetchCategories()
-                .onSuccess { result ->
-                    viewModelState.update {
-                        it.copy(
-                            loading = false,
-                            categories = result
-                        )
-                    }
-
-                    result.forEach { item ->
-                        launch {
-                            fetchSubCategories(item)
-                        }
-                    }
-                }.onError { _, _ ->
-
+            useCase.observeCategories().collect { categories ->
+                viewModelState.update { current ->
+                    current.copy(
+                        loading = false,
+                        categories = categories
+                    )
                 }
+            }
+        }
+    }
+
+    private fun syncBooks() {
+        viewModelScope.launch(Dispatchers.IO) {
+            useCase.syncIfNeeded()
         }
     }
 
     private suspend fun fetchSubCategories(category: Category) {
-        val subResult = useCase.fetchSubCategories(url = category.path)
-            .getOrNull()
-            .orEmpty()
-        viewModelState.update { current ->
-            current.copy(
-                categories = current.categories.map { item ->
-                    if (item.title == category.title) {
-                        item.copy(subCategories = subResult)
-                    } else item
-                }
-            )
-        }
+//        val subResult = useCase.observeSubCategories(url = category.path)
+//            .getOrNull()
+//            .orEmpty()
+//        viewModelState.update { current ->
+//            current.copy(
+//                categories = current.categories.map { item ->
+//                    if (item.title == category.title) {
+//                        item.copy(subCategories = subResult)
+//                    } else item
+//                }
+//            )
+//        }
     }
 
     fun onEvent(event: BooksEvent) {
@@ -107,24 +107,24 @@ class BooksViewModel @Inject constructor(
     }
 
     fun setSubCategory(selectedSubCategory: String) {
-        val subCategory = viewModelState.value.categories
-            .flatMap { it.subCategories }
-            .firstOrNull { it.title == selectedSubCategory }
-            ?.books.orEmpty()
-
-        Log.d("BooksViewModel", "${viewModelState.value.categories.size}")
-        Log.d("BooksViewModel", "setSubCategory: $selectedSubCategory, books: ${subCategory.size}")
-
-        viewModelState.update { state ->
-            state.copy(
-                selectedSubCategoryBooks = subCategory
-            )
-        }
-        viewModelState.update { state ->
-            state.copy(
-                selectedSubCategory = selectedSubCategory
-            )
-        }
+//        val subCategory = viewModelState.value.categories
+//            .flatMap { it.subCategories }
+//            .firstOrNull { it.title == selectedSubCategory }
+//            ?.books.orEmpty()
+//
+//        Log.d("BooksViewModel", "${viewModelState.value.categories.size}")
+//        Log.d("BooksViewModel", "setSubCategory: $selectedSubCategory, books: ${subCategory.size}")
+//
+//        viewModelState.update { state ->
+//            state.copy(
+//                selectedSubCategoryBooks = subCategory
+//            )
+//        }
+//        viewModelState.update { state ->
+//            state.copy(
+//                selectedSubCategory = selectedSubCategory
+//            )
+//        }
     }
 }
 
@@ -132,8 +132,6 @@ private data class BooksViewModelState(
     val loading: Boolean = true,
     val categories: List<Category> = emptyList(),
     val toggleIndex: Int = 0,
-    val selectedSubCategory: String = "",
-    val selectedSubCategoryBooks: List<Book> = emptyList()
 ) {
     fun toUiState(): BooksUiState {
         return if (loading) {
