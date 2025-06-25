@@ -16,9 +16,6 @@ fun BooksScreenRoute(
     viewModel.navigation.consume { state ->
         when (state) {
             is BooksNavigationState.Next -> onNext(state.title)
-            is BooksNavigationState.OpenBook -> {
-
-            }
         }
     }
 

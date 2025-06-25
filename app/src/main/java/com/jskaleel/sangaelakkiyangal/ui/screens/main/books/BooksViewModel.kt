@@ -5,12 +5,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jskaleel.sangaelakkiyangal.domain.model.Book
+import com.jskaleel.sangaelakkiyangal.core.model.onError
 import com.jskaleel.sangaelakkiyangal.domain.model.Category
 import com.jskaleel.sangaelakkiyangal.domain.usecase.BooksUseCase
-import com.jskaleel.sangaelakkiyangal.ui.screens.main.booklist.BookListUiModel
 import com.jskaleel.sangaelakkiyangal.ui.screens.main.books.BooksNavigationState.Next
-import com.jskaleel.sangaelakkiyangal.ui.screens.main.books.BooksNavigationState.OpenBook
 import com.jskaleel.sangaelakkiyangal.ui.utils.mutableNavigationState
 import com.jskaleel.sangaelakkiyangal.ui.utils.navigate
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -42,21 +40,40 @@ class BooksViewModel @Inject constructor(
     init {
         syncBooks()
         observeCategories()
-        observeSubCategories()
     }
 
-    private fun observeSubCategories() {
-
+    private fun observeSubCategories(categories: List<Category>) {
+        categories.forEach { category ->
+            viewModelScope.launch(Dispatchers.IO) {
+                Log.d("Khaleel", "category: $category")
+                useCase.observeSubCategories(category.title).collect { result ->
+                    Log.d("Khaleel", "Result: $result")
+                    viewModelState.update { current ->
+                        current.copy(
+                            categories = current.categories.map { item ->
+                                if (item.title == category.title) {
+                                    item.copy(subCategories = result)
+                                } else item
+                            }
+                        )
+                    }
+                }
+            }
+        }
     }
 
     private fun observeCategories() {
         viewModelScope.launch(Dispatchers.IO) {
             useCase.observeCategories().collect { categories ->
+                Log.d("Khaleel", "categories: $categories")
                 viewModelState.update { current ->
                     current.copy(
                         loading = false,
                         categories = categories
                     )
+                }
+                if (categories.isNotEmpty()) {
+                    observeSubCategories(categories)
                 }
             }
         }
@@ -64,31 +81,14 @@ class BooksViewModel @Inject constructor(
 
     private fun syncBooks() {
         viewModelScope.launch(Dispatchers.IO) {
-            useCase.syncIfNeeded()
+            useCase.syncIfNeeded().onError { code, message ->
+                Log.d("BooksViewModel", "syncBooks: $code, $message")
+            }
         }
-    }
-
-    private suspend fun fetchSubCategories(category: Category) {
-//        val subResult = useCase.observeSubCategories(url = category.path)
-//            .getOrNull()
-//            .orEmpty()
-//        viewModelState.update { current ->
-//            current.copy(
-//                categories = current.categories.map { item ->
-//                    if (item.title == category.title) {
-//                        item.copy(subCategories = subResult)
-//                    } else item
-//                }
-//            )
-//        }
     }
 
     fun onEvent(event: BooksEvent) {
         when (event) {
-            BooksEvent.OnBookClick -> {
-                navigation = navigate(OpenBook(id = "book_id"))
-            }
-
             is BooksEvent.OnCategoryToggle -> {
                 viewModelState.update { state ->
                     val newToggleIndex = if (state.toggleIndex == event.index) -1 else event.index
@@ -99,32 +99,7 @@ class BooksViewModel @Inject constructor(
             is BooksEvent.OnSubCategoryClick -> {
                 navigation = navigate(Next(title = event.title))
             }
-
-            BooksEvent.OnBackClick -> {
-
-            }
         }
-    }
-
-    fun setSubCategory(selectedSubCategory: String) {
-//        val subCategory = viewModelState.value.categories
-//            .flatMap { it.subCategories }
-//            .firstOrNull { it.title == selectedSubCategory }
-//            ?.books.orEmpty()
-//
-//        Log.d("BooksViewModel", "${viewModelState.value.categories.size}")
-//        Log.d("BooksViewModel", "setSubCategory: $selectedSubCategory, books: ${subCategory.size}")
-//
-//        viewModelState.update { state ->
-//            state.copy(
-//                selectedSubCategoryBooks = subCategory
-//            )
-//        }
-//        viewModelState.update { state ->
-//            state.copy(
-//                selectedSubCategory = selectedSubCategory
-//            )
-//        }
     }
 }
 
@@ -151,14 +126,6 @@ private data class BooksViewModelState(
                                 )
                             }
                         )
-                    },
-                    selectedSubCategory = selectedSubCategory,
-                    selectedSubCategoryBooks = selectedSubCategoryBooks.map {
-                        BookListUiModel(
-                            title = it.title,
-                            id = it.id,
-                            url = it.url
-                        )
                     }
                 )
             }
@@ -170,20 +137,15 @@ sealed interface BooksUiState {
     data object Loading : BooksUiState
     data object Empty : BooksUiState
     data class Success(
-        val categories: List<CategoryUiModel>,
-        val selectedSubCategory: String,
-        val selectedSubCategoryBooks: List<BookListUiModel> = emptyList()
+        val categories: List<CategoryUiModel>
     ) : BooksUiState
 }
 
 sealed interface BooksNavigationState {
     data class Next(val title: String) : BooksNavigationState
-    data class OpenBook(val id: String) : BooksNavigationState
 }
 
 sealed interface BooksEvent {
-    data object OnBackClick : BooksEvent
-    data object OnBookClick : BooksEvent
     data class OnCategoryToggle(val index: Int) : BooksEvent
     data class OnSubCategoryClick(val title: String) : BooksEvent
 }

@@ -1,9 +1,9 @@
 package com.jskaleel.sangaelakkiyangal.ui.model
 
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.annotation.DrawableRes
 
 data class BottomBarItem(
     val title: String,
-    val icon: Painter,
+    @DrawableRes val icon: Int,
     val route: String
 )

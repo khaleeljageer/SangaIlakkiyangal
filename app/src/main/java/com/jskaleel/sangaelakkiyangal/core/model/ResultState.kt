@@ -7,7 +7,6 @@ sealed class ResultState<out T> {
     data class Error(val message: String, val code: Int? = null) : ResultState<Nothing>()
 }
 
-
 inline fun <I> ResultState<I>.onSuccess(action: (I) -> Unit): ResultState<I> {
     if (this is ResultState.Success) action(data)
     return this
@@ -30,3 +29,6 @@ fun <T> ResultState<T>.getOrNull(): T? {
         is ResultState.Error -> null
     }
 }
+
+const val NO_INTERNET_ERROR_CODE = 1
+const val UNKNOWN_ERROR_CODE = 2

@@ -3,34 +3,33 @@ package com.jskaleel.sangaelakkiyangal.ui.screens.main.booklist
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.jskaleel.sangaelakkiyangal.ui.screens.main.books.BooksNavigationState
-import com.jskaleel.sangaelakkiyangal.ui.screens.main.books.BooksUiState
-import com.jskaleel.sangaelakkiyangal.ui.screens.main.books.BooksViewModel
+import com.jskaleel.sangaelakkiyangal.core.CallBack
+import com.jskaleel.sangaelakkiyangal.core.StringCallBack
+import com.jskaleel.sangaelakkiyangal.ui.screens.common.FullScreenLoader
 import com.jskaleel.sangaelakkiyangal.ui.utils.consume
 
 @Composable
 fun BookListScreenRoute(
-    openBook: (String) -> Unit,
-    viewModel: BooksViewModel,
+    openBook: StringCallBack,
+    onBack: CallBack,
+    viewModel: BookListViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     viewModel.navigation.consume { state ->
         when (state) {
-            is BooksNavigationState.OpenBook -> openBook(state.id)
-            else -> {}
+            is BookListNavigationState.OpenBook -> openBook(state.id)
         }
     }
 
     when (val state = uiState) {
-        is BooksUiState.Success -> {
+        BookListUiState.Loading -> FullScreenLoader()
+        is BookListUiState.Success -> {
             BookListScreenContent(
-                subCategory = state.selectedSubCategory,
-                books = state.selectedSubCategoryBooks,
-                event = viewModel::onEvent
+                onBack = onBack,
+                subCategory = state.subCategory,
+                books = state.books
             )
         }
-
-        else -> {}
     }
 }

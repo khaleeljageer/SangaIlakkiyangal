@@ -1,6 +1,5 @@
 package com.jskaleel.sangaelakkiyangal.ui.screens.main.booklist
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -20,15 +19,16 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.jskaleel.sangaelakkiyangal.core.CallBack
 import com.jskaleel.sangaelakkiyangal.ui.screens.main.books.BooksEvent
 import com.jskaleel.sangaelakkiyangal.ui.theme.fontFamily
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookListScreenContent(
-    subCategory: String,
-    books: List<BookListUiModel>,
-    event: (BooksEvent) -> Unit
+    onBack: CallBack,
+    books: List<BookUiModel>,
+    subCategory: String
 ) {
     Scaffold(
         topBar = {
@@ -47,7 +47,7 @@ fun BookListScreenContent(
                         contentDescription = "Back",
                         modifier = Modifier
                             .clip(shape = CircleShape)
-                            .clickable { event(BooksEvent.OnBackClick) }
+                            .clickable { onBack() }
                             .padding(8.dp)
                     )
                 }
@@ -69,7 +69,7 @@ fun BookListScreenContent(
 }
 
 @Immutable
-data class BookListUiModel(
+data class BookUiModel(
     val title: String,
     val id: String,
     val url: String

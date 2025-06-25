@@ -9,10 +9,33 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.jskaleel.sangaelakkiyangal.R
 import com.jskaleel.sangaelakkiyangal.ui.model.BottomBarItem
 import com.jskaleel.sangaelakkiyangal.ui.navigation.Route
+import com.jskaleel.sangaelakkiyangal.ui.navigation.Screen
+
+val bottomBarItems = listOf(
+    BottomBarItem(
+        title = "Home",
+        icon = R.drawable.rounded_dashboard_24,
+        route = Screen.Main.Home.route
+    ),
+    BottomBarItem(
+        title = "Download",
+        icon = R.drawable.rounded_downloads_24,
+        route = Screen.Main.Download.route
+    ),
+    BottomBarItem(
+        title = "About",
+        icon = R.drawable.rounded_info_24,
+        route = Screen.Main.AboutApp.route
+    )
+)
+
+val bottomBarMenuRoutes = bottomBarItems.map { it.route }
 
 @Composable
 fun BottomNavigationBar(
@@ -21,7 +44,9 @@ fun BottomNavigationBar(
     currentRoute: String?
 ) {
     NavigationBar(
-        modifier = Modifier.fillMaxWidth().shadow(2.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .shadow(2.dp),
         tonalElevation = 6.dp,
         containerColor = MaterialTheme.colorScheme.surface,
     ) {
@@ -29,7 +54,7 @@ fun BottomNavigationBar(
             NavigationBarItem(
                 icon = {
                     Icon(
-                        item.icon,
+                        painter = painterResource(item.icon),
                         contentDescription = item.title,
                     )
                 },

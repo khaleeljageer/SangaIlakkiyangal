@@ -6,8 +6,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,17 +23,14 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.jskaleel.sangaelakkiyangal.ui.model.BottomBarItem
 import com.jskaleel.sangaelakkiyangal.ui.navigation.NavigationHost
-import com.jskaleel.sangaelakkiyangal.ui.navigation.Screen
 import com.jskaleel.sangaelakkiyangal.ui.theme.AppTheme
 import com.jskaleel.sangaelakkiyangal.ui.theme.fontFamily
 import com.jskaleel.sangaelakkiyangal.ui.utils.BottomNavigationBar
+import com.jskaleel.sangaelakkiyangal.ui.utils.bottomBarItems
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -59,29 +61,17 @@ private fun MainNavigation() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-    val bottomBarItems = listOf(
-        BottomBarItem(
-            title = "Home",
-            icon = painterResource(id = R.drawable.rounded_dashboard_24),
-            route = Screen.Main.Home.route
-        ),
-        BottomBarItem(
-            title = "Download",
-            icon = painterResource(id = R.drawable.rounded_downloads_24),
-            route = Screen.Main.Download.route
-        ),
-        BottomBarItem(
-            title = "About",
-            icon = painterResource(id = R.drawable.rounded_info_24),
-            route = Screen.Main.AboutApp.route
-        )
-    )
+
     // Show bottom bar only on home screen
     val showBottomBar = bottomBarItems.any { it.route in currentRoute.orEmpty() }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            if (showBottomBar) {
+            AnimatedVisibility(
+                visible = showBottomBar,
+                enter = fadeIn() + expandVertically(),
+                exit = shrinkVertically() + fadeOut()
+            ) {
                 TopAppBar(title = {
                     Text(
                         text = stringResource(R.string.ta_app_name),
@@ -93,7 +83,11 @@ private fun MainNavigation() {
             }
         },
         bottomBar = {
-            if (showBottomBar) {
+            AnimatedVisibility(
+                visible = showBottomBar,
+                enter = fadeIn() + expandVertically(),
+                exit = shrinkVertically() + fadeOut()
+            ) {
                 BottomNavigationBar(
                     items = bottomBarItems,
                     navController = navController,
@@ -104,8 +98,8 @@ private fun MainNavigation() {
     ) { innerPadding ->
         Box(
             modifier = Modifier
+                .padding(innerPadding)
                 .fillMaxSize()
-                .padding(if (showBottomBar) innerPadding else PaddingValues(all = 0.dp))
         ) {
             NavigationHost(
                 navController = navController,

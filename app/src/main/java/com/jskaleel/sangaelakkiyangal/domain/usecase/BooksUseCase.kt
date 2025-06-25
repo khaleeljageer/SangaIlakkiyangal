@@ -1,12 +1,14 @@
 package com.jskaleel.sangaelakkiyangal.domain.usecase
 
+import com.jskaleel.sangaelakkiyangal.core.model.ResultState
+import com.jskaleel.sangaelakkiyangal.domain.model.Book
 import com.jskaleel.sangaelakkiyangal.domain.model.Category
 import com.jskaleel.sangaelakkiyangal.domain.model.SubCategory
 import kotlinx.coroutines.flow.Flow
 
 interface BooksUseCase {
-    suspend fun syncIfNeeded()
+    suspend fun syncIfNeeded(): ResultState<Unit>
     suspend fun observeCategories(): Flow<List<Category>>
-    suspend fun observeSubCategories(url: String): Flow<List<SubCategory>>
-    suspend fun observeBooks(url: String): Flow<List<SubCategory>>
+    suspend fun observeSubCategories(category: String): Flow<List<SubCategory>>
+    suspend fun observeBooks(subCategory: String): Flow<List<Book>>
 }

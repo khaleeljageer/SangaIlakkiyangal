@@ -27,3 +27,11 @@ abstract class ResultMapper<I, O> : IMapper<ResultState<I>, ResultState<O>> {
         }
     }
 }
+
+abstract class Mapper<I, O> : IMapper<I, O> {
+    abstract fun onSuccess(input: I): O
+
+    override fun map(input: I): O {
+        return onSuccess(input)
+    }
+}
