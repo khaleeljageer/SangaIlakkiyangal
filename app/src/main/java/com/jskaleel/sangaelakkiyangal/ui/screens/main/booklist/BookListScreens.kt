@@ -11,7 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.automirrored.rounded.OpenInNew
+import androidx.compose.material.icons.automirrored.rounded.MenuBook
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -45,7 +45,7 @@ fun BookListScreenContent(
             text = subCategory,
             fontFamily = fontFamily,
             color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),,
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
         )
     }
 
@@ -69,7 +69,9 @@ fun BookListScreenContent(
             BookListItem(
                 book = book,
                 onDownloadClick = { },
-                onOpenClick = { }
+                onOpenClick = {
+
+                }
             )
         }
     }
@@ -103,7 +105,7 @@ fun BookListItem(
             else onDownloadClick(book)
         }) {
             Icon(
-                imageVector = if (book.downloaded) Icons.AutoMirrored.Rounded.OpenInNew else Icons.Rounded.Download,
+                imageVector = if (book.downloaded) Icons.AutoMirrored.Rounded.MenuBook else Icons.Rounded.Download,
                 contentDescription = if (book.downloaded) "Open Book" else "Download Book"
             )
         }
