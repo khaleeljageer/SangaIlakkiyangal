@@ -63,4 +63,20 @@ class BooksUseCaseImpl @Inject constructor(
     ): Flow<DownloadResult> {
         return downloadRepository.downloadBook(id = id, url = url, fileName = fileName)
     }
+
+    override suspend fun getBookPath(bookId: String): String {
+        return downloadRepository.getBookById(bookId)
+    }
+
+    override suspend fun getAllDownloadedBooks(): List<Book> {
+        return downloadRepository.getAllDownloadedBook().map {
+            Book(
+                title = it.title,
+                url = "",
+                id = it.bookId,
+                downloaded = true,
+                path = it.filePath,
+            )
+        }
+    }
 }

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "a0225c5a0917206e9ec1513ee5d7ace4",
+    "identityHash": "55b5eee6420303ff5096893f1eb79e3b",
     "entities": [
       {
         "tableName": "categories",
@@ -72,7 +72,7 @@
       },
       {
         "tableName": "downloaded_books",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`bookId` TEXT NOT NULL, `filePath` TEXT NOT NULL, PRIMARY KEY(`bookId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`bookId` TEXT NOT NULL, `filePath` TEXT NOT NULL, `title` TEXT NOT NULL, PRIMARY KEY(`bookId`))",
         "fields": [
           {
             "fieldPath": "bookId",
@@ -83,6 +83,12 @@
           {
             "fieldPath": "filePath",
             "columnName": "filePath",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -133,7 +139,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a0225c5a0917206e9ec1513ee5d7ace4')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '55b5eee6420303ff5096893f1eb79e3b')"
     ]
   }
 }

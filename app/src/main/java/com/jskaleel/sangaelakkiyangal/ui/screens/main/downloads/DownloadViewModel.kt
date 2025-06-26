@@ -4,6 +4,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jskaleel.sangaelakkiyangal.domain.model.Book
+import com.jskaleel.sangaelakkiyangal.domain.usecase.BooksUseCase
+import com.jskaleel.sangaelakkiyangal.ui.screens.main.downloads.DownloadNavigationState.OpenBook
 import com.jskaleel.sangaelakkiyangal.ui.utils.mutableNavigationState
 import com.jskaleel.sangaelakkiyangal.ui.utils.navigate
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +21,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DownloadViewModel @Inject constructor() : ViewModel() {
+class DownloadViewModel @Inject constructor(
+    private val useCase: BooksUseCase,
+) : ViewModel() {
 
     var navigation by mutableNavigationState<DownloadNavigationState>()
         private set
@@ -34,19 +39,21 @@ class DownloadViewModel @Inject constructor() : ViewModel() {
 
     fun onEvent(event: DownloadEvent) {
         when (event) {
-            DownloadEvent.OnBookClick -> {
-                navigation = navigate(DownloadNavigationState.OpenBook(id = "book_id"))
+            is DownloadEvent.OnBookClick -> {
+                navigation = navigate(OpenBook(id = event.id))
             }
         }
     }
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
+            val books = useCase.getAllDownloadedBooks()
             delay(1000)
+
             viewModelState.update {
                 it.copy(
                     loading = false,
-                    books = emptyList()
+                    books = books
                 )
             }
         }
@@ -55,7 +62,7 @@ class DownloadViewModel @Inject constructor() : ViewModel() {
 
 private data class DownloadViewModelState(
     val loading: Boolean = true,
-    val books: List<String> = emptyList()
+    val books: List<Book> = emptyList()
 ) {
     fun toUiState(): DownloadUiState {
         return if (loading) {
@@ -64,7 +71,13 @@ private data class DownloadViewModelState(
             if (books.isEmpty()) {
                 DownloadUiState.Empty
             } else {
-                DownloadUiState.Success(books = books)
+                DownloadUiState.Success(books = books.map {
+                    BookUiModel(
+                        id = it.id,
+                        title = it.title,
+                        downloaded = it.downloaded
+                    )
+                })
             }
         }
     }
@@ -73,7 +86,7 @@ private data class DownloadViewModelState(
 sealed interface DownloadUiState {
     data object Loading : DownloadUiState
     data object Empty : DownloadUiState
-    data class Success(val books: List<String>) : DownloadUiState
+    data class Success(val books: List<BookUiModel>) : DownloadUiState
 }
 
 sealed interface DownloadNavigationState {
@@ -81,5 +94,5 @@ sealed interface DownloadNavigationState {
 }
 
 sealed interface DownloadEvent {
-    data object OnBookClick : DownloadEvent
+    data class OnBookClick(val id: String) : DownloadEvent
 }

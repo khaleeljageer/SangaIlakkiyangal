@@ -31,5 +31,6 @@ data class SyncStatusEntity(
 @Entity(tableName = "downloaded_books")
 data class DownloadedBookEntity(
     @PrimaryKey val bookId: String,
-    val filePath: String
+    val filePath: String,
+    val title: String
 )

@@ -8,6 +8,7 @@ import com.jskaleel.sangaelakkiyangal.core.model.DownloadResult
 import com.jskaleel.sangaelakkiyangal.domain.model.Book
 import com.jskaleel.sangaelakkiyangal.domain.usecase.BooksUseCase
 import com.jskaleel.sangaelakkiyangal.ui.utils.mutableNavigationState
+import com.jskaleel.sangaelakkiyangal.ui.utils.navigate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -54,7 +55,9 @@ class BookListViewModel @Inject constructor(
     fun onEvent(event: BookListEvent) {
         when (event) {
             is BookListEvent.OnDownloadClick -> downloadBook(event.bookId)
-            is BookListEvent.OnOpenClick -> TODO()
+            is BookListEvent.OnOpenClick -> {
+                navigation = navigate(BookListNavigationState.OpenBook(event.bookId))
+            }
         }
     }
 

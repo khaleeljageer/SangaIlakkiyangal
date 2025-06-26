@@ -18,4 +18,7 @@ interface BooksUseCase {
         url: String,
         fileName: String,
     ): Flow<DownloadResult>
+
+    suspend fun getBookPath(bookId: String): String
+    suspend fun getAllDownloadedBooks(): List<Book>
 }

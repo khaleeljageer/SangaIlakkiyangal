@@ -9,6 +9,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import com.jskaleel.sangaelakkiyangal.core.StringCallBack
+import com.jskaleel.sangaelakkiyangal.ui.screens.common.FullScreenLoader
 import com.jskaleel.sangaelakkiyangal.ui.utils.consume
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -35,7 +36,7 @@ fun BooksScreenRoute(
     }
 
     when (val state = uiState) {
-        BooksUiState.Loading -> BooksLoadingScreen()
+        BooksUiState.Loading -> FullScreenLoader()
         BooksUiState.Empty -> BooksEmptyScreen()
         is BooksUiState.Success -> {
             BooksScreenContent(

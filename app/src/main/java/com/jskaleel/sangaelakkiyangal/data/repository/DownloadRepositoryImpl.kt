@@ -41,7 +41,8 @@ class DownloadRepositoryImpl @Inject constructor(
                             database.downloadedBookDao().insert(
                                 DownloadedBookEntity(
                                     bookId = result.id,
-                                    result.file.path
+                                    filePath = result.file.path,
+                                    title = fileName,
                                 )
                             )
                             emit(DownloadResult.Success(id, fileName, result.file))
@@ -65,6 +66,10 @@ class DownloadRepositoryImpl @Inject constructor(
 
     override suspend fun getAllDownloadedBook(): List<DownloadedBookEntity> {
         return database.downloadedBookDao().getAll()
+    }
+
+    override suspend fun getBookById(bookId: String): String {
+        return database.downloadedBookDao().get(bookId)?.filePath ?: ""
     }
 
     private fun showDownloadSuccessNotification(id: String, fileName: String) {
