@@ -1,9 +1,10 @@
-package com.jskaleel.sangaelakkiyangal.ui.screens.main.booklist
+package com.jskaleel.sangaelakkiyangal.ui.screens.booklist
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jskaleel.sangaelakkiyangal.core.model.DownloadResult
 import com.jskaleel.sangaelakkiyangal.domain.model.Book
 import com.jskaleel.sangaelakkiyangal.domain.usecase.BooksUseCase
 import com.jskaleel.sangaelakkiyangal.ui.utils.mutableNavigationState
@@ -35,9 +36,7 @@ class BookListViewModel @Inject constructor(
 
     fun setup(subCategory: String) {
         viewModelState.update { state ->
-            state.copy(
-                loading = true
-            )
+            state.copy(loading = true)
         }
         viewModelScope.launch(Dispatchers.IO) {
             useCase.observeBooks(subCategory).collect { books ->
@@ -51,12 +50,63 @@ class BookListViewModel @Inject constructor(
             }
         }
     }
+
+    fun onEvent(event: BookListEvent) {
+        when (event) {
+            is BookListEvent.OnDownloadClick -> downloadBook(event.bookId)
+            is BookListEvent.OnOpenClick -> TODO()
+        }
+    }
+
+    private fun downloadBook(bookId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val item: Book = viewModelState.value.bookList.first { it.id == bookId }
+            useCase.downloadBook(item.id, item.url, item.title)
+                .collect { result ->
+                    when (result) {
+                        is DownloadResult.Error -> {
+//                            viewModelState.update {
+//                                it.copy(
+//                                    errorState = (result.exception.message
+//                                        ?: "").toLocalErrorState()
+//                                )
+//                            }
+                        }
+
+                        is DownloadResult.Progress -> {
+                            val items = viewModelState.value.downloadingItems.toMutableSet()
+                            items.add(result.id)
+                            viewModelState.update {
+                                it.copy(downloadingItems = items)
+                            }
+                        }
+
+                        is DownloadResult.Queued -> {
+                            val items = viewModelState.value.downloadingItems.toMutableSet()
+                            items.add(result.id)
+                            viewModelState.update {
+                                it.copy(downloadingItems = items)
+                            }
+                        }
+
+                        is DownloadResult.Success -> {
+                            val items = viewModelState.value.downloadingItems.toMutableSet()
+                            items.remove(result.id)
+                            viewModelState.update {
+                                it.copy(downloadingItems = items)
+                            }
+                        }
+                    }
+                }
+        }
+    }
 }
 
 private data class BookListViewModelState(
     val subCategory: String = "",
     val bookList: List<Book> = emptyList(),
     val loading: Boolean = true,
+    val downloadingItems: Set<String> = emptySet(),
 ) {
     fun toUiState(): BookListUiState {
         return if (loading) {
@@ -69,7 +119,8 @@ private data class BookListViewModelState(
                         title = it.title,
                         id = it.id,
                         url = it.url,
-                        downloaded = false
+                        downloaded = it.downloaded,
+                        progress = downloadingItems.contains(it.id)
                     )
                 }
             )
@@ -87,4 +138,9 @@ sealed interface BookListUiState {
 
 sealed interface BookListNavigationState {
     data class OpenBook(val id: String) : BookListNavigationState
+}
+
+sealed interface BookListEvent {
+    data class OnDownloadClick(val bookId: String) : BookListEvent
+    data class OnOpenClick(val bookId: String) : BookListEvent
 }

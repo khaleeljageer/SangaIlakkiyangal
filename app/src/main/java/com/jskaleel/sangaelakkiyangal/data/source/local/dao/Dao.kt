@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.jskaleel.sangaelakkiyangal.data.source.local.entity.BookEntity
 import com.jskaleel.sangaelakkiyangal.data.source.local.entity.CategoryEntity
+import com.jskaleel.sangaelakkiyangal.data.source.local.entity.DownloadedBookEntity
 import com.jskaleel.sangaelakkiyangal.data.source.local.entity.SubCategoryEntity
 import com.jskaleel.sangaelakkiyangal.data.source.local.entity.SyncStatusEntity
 import kotlinx.coroutines.flow.Flow
@@ -44,4 +45,20 @@ interface SyncStatusDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(status: SyncStatusEntity)
+}
+
+@Dao
+interface DownloadedBookDao {
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(entity: DownloadedBookEntity)
+
+    @Query("SELECT * FROM downloaded_books WHERE bookId = :bookId")
+    suspend fun get(bookId: String): DownloadedBookEntity?
+
+    @Query("SELECT * FROM downloaded_books")
+    suspend fun getAll(): List<DownloadedBookEntity>
+
+    @Query("DELETE FROM downloaded_books WHERE bookId = :bookId")
+    suspend fun delete(bookId: String)
 }

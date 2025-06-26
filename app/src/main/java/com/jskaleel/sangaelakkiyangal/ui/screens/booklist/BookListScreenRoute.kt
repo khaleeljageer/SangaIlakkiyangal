@@ -1,4 +1,4 @@
-package com.jskaleel.sangaelakkiyangal.ui.screens.main.booklist
+package com.jskaleel.sangaelakkiyangal.ui.screens.booklist
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,6 +27,7 @@ fun BookListScreenRoute(
         is BookListUiState.Success -> {
             BookListScreenContent(
                 onBack = onBack,
+                event = viewModel::onEvent,
                 subCategory = state.subCategory,
                 books = state.books
             )

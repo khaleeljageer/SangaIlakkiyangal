@@ -27,3 +27,9 @@ data class SyncStatusEntity(
     @PrimaryKey val id: Int = 0, // only one row
     val lastSynced: Long
 )
+
+@Entity(tableName = "downloaded_books")
+data class DownloadedBookEntity(
+    @PrimaryKey val bookId: String,
+    val filePath: String
+)

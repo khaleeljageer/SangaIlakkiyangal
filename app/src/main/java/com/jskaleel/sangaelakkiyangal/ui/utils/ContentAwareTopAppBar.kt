@@ -22,7 +22,7 @@ import com.jskaleel.sangaelakkiyangal.ui.navigation.Screen
 val topBarItems = listOf(
     Screen.Main.Home,
     Screen.Main.Download,
-    Screen.Main.BookList,
+    Screen.BookList,
     Screen.Main.AboutApp
 )
 

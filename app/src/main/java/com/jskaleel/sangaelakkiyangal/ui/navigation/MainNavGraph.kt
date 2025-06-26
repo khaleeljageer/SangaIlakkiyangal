@@ -3,15 +3,16 @@ package com.jskaleel.sangaelakkiyangal.ui.navigation
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
 import androidx.navigation.navigation
+import com.jskaleel.sangaelakkiyangal.ui.screens.booklist.BookListScreenRoute
+import com.jskaleel.sangaelakkiyangal.ui.screens.booklist.BookListViewModel
 import com.jskaleel.sangaelakkiyangal.ui.screens.main.about.AboutScreenRoute
-import com.jskaleel.sangaelakkiyangal.ui.screens.main.booklist.BookListScreenRoute
-import com.jskaleel.sangaelakkiyangal.ui.screens.main.booklist.BookListViewModel
 import com.jskaleel.sangaelakkiyangal.ui.screens.main.books.BooksScreenRoute
 import com.jskaleel.sangaelakkiyangal.ui.screens.main.books.BooksViewModel
 import com.jskaleel.sangaelakkiyangal.ui.screens.main.downloads.DownloadScreenRoute
 import com.jskaleel.sangaelakkiyangal.ui.screens.main.downloads.DownloadViewModel
+import com.jskaleel.sangaelakkiyangal.ui.screens.reader.PdfReaderScreenRoute
+import com.jskaleel.sangaelakkiyangal.ui.screens.reader.PdfReaderViewModel
 import com.jskaleel.sangaelakkiyangal.ui.utils.InvokeOnce
 
 
@@ -26,7 +27,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             BooksScreenRoute(
                 onNext = {
                     navController.navigate(
-                        Screen.Main.BookList.Link.create(it)
+                        Screen.BookList.Link.create(it)
                     )
                 },
                 viewModel = viewModel
@@ -37,7 +38,11 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             val viewModel: DownloadViewModel = hiltViewModel()
 
             DownloadScreenRoute(
-                openBook = {},
+                openBook = { id ->
+                    navController.navigate(
+                        Screen.PdfReader.Link.create(bookId = id)
+                    )
+                },
                 viewModel = viewModel
             )
         }
@@ -46,17 +51,31 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             AboutScreenRoute()
         }
 
-        animatedComposable(route = Screen.Main.BookList.Link.link) { entry ->
+        animatedComposable(route = Screen.BookList.Link.link) { entry ->
             val viewModel: BookListViewModel = hiltViewModel()
             InvokeOnce {
-                val subCategory = Screen.Main.BookList.Link.get(entry.arguments)
+                val subCategory = Screen.BookList.Link.get(entry.arguments)
                 viewModel.setup(subCategory)
             }
             BookListScreenRoute(
                 viewModel = viewModel,
                 onBack = { navController.popBackStack() },
-                openBook = {
+                openBook = { id ->
+                    navController.navigate(
+                        Screen.PdfReader.Link.create(bookId = id)
+                    )
                 }
+            )
+        }
+        animatedComposable(route = Screen.PdfReader.Link.link) { entry ->
+            val viewModel: PdfReaderViewModel = hiltViewModel()
+            InvokeOnce {
+                val bookId = Screen.PdfReader.Link.get(entry.arguments)
+                viewModel.setup(bookId)
+            }
+            PdfReaderScreenRoute(
+                onBack = { navController.popBackStack() },
+                viewModel = viewModel
             )
         }
     }

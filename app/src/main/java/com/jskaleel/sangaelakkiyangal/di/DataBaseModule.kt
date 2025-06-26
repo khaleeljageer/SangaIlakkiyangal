@@ -20,7 +20,7 @@ class DataBaseModule {
             context,
             BooksDatabase::class.java,
             APP_DATABASE_NAME,
-        ).fallbackToDestructiveMigration(false).build()
+        ).fallbackToDestructiveMigration(true).build()
     }
 
     companion object {

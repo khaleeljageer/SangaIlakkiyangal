@@ -16,8 +16,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -57,6 +60,7 @@ private fun MainNavigation() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val snackBarHostState = remember { SnackbarHostState() }
 
     // Show bottom bar only on home screen
     val showBottomBar = bottomBarItems.any { it.route in currentRoute.orEmpty() }
@@ -74,6 +78,7 @@ private fun MainNavigation() {
                 )
             }
         },
+        snackbarHost = { SnackbarHost(snackBarHostState) },
         bottomBar = {
             AnimatedVisibility(
                 visible = showBottomBar,
