@@ -1,5 +1,6 @@
 package com.jskaleel.sangaelakkiyangal.ui.screens.booklist
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -41,6 +42,7 @@ class BookListViewModel @Inject constructor(
         }
         viewModelScope.launch(Dispatchers.IO) {
             useCase.observeBooks(subCategory).collect { books ->
+                Log.d("Khaleel", "observeBooks: $books")
                 viewModelState.update { state ->
                     state.copy(
                         bookList = books,
@@ -95,8 +97,13 @@ class BookListViewModel @Inject constructor(
                         is DownloadResult.Success -> {
                             val items = viewModelState.value.downloadingItems.toMutableSet()
                             items.remove(result.id)
+                            val books = viewModelState.value.bookList.map { book ->
+                                if (book.id == result.id) {
+                                    book.copy(downloaded = true, path = result.file.path)
+                                } else book
+                            }
                             viewModelState.update {
-                                it.copy(downloadingItems = items)
+                                it.copy(downloadingItems = items, bookList = books)
                             }
                         }
                     }

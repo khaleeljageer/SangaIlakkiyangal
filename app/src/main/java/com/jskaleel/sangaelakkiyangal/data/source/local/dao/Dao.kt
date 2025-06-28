@@ -57,7 +57,7 @@ interface DownloadedBookDao {
     suspend fun get(bookId: String): DownloadedBookEntity?
 
     @Query("SELECT * FROM downloaded_books")
-    suspend fun getAll(): List<DownloadedBookEntity>
+    fun getAll(): Flow<List<DownloadedBookEntity>>
 
     @Query("DELETE FROM downloaded_books WHERE bookId = :bookId")
     suspend fun delete(bookId: String)

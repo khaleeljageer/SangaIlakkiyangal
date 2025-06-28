@@ -8,6 +8,7 @@ import com.jskaleel.sangaelakkiyangal.domain.model.Book
 import com.jskaleel.sangaelakkiyangal.domain.model.Category
 import com.jskaleel.sangaelakkiyangal.domain.model.SubCategory
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -41,7 +42,7 @@ class BooksUseCaseImpl @Inject constructor(
     }
 
     override suspend fun observeBooks(subCategory: String): Flow<List<Book>> {
-        val downloads = downloadRepository.getAllDownloadedBook()
+        val downloads = downloadRepository.getAllDownloadedBook().firstOrNull().orEmpty()
         return booksRepository.observeBooks(subCategory).map { list ->
             list.map {
                 val localInfo = downloads.firstOrNull { it1 -> it1.bookId == it.id }
@@ -68,15 +69,17 @@ class BooksUseCaseImpl @Inject constructor(
         return downloadRepository.getBookById(bookId)
     }
 
-    override suspend fun getAllDownloadedBooks(): List<Book> {
-        return downloadRepository.getAllDownloadedBook().map {
-            Book(
-                title = it.title,
-                url = "",
-                id = it.bookId,
-                downloaded = true,
-                path = it.filePath,
-            )
+    override suspend fun getAllDownloadedBooks(): Flow<List<Book>> {
+        return downloadRepository.getAllDownloadedBook().map { list ->
+            list.map {
+                Book(
+                    title = it.title,
+                    url = "",
+                    id = it.bookId,
+                    downloaded = true,
+                    path = it.filePath,
+                )
+            }
         }
     }
 }

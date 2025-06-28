@@ -20,5 +20,5 @@ interface BooksUseCase {
     ): Flow<DownloadResult>
 
     suspend fun getBookPath(bookId: String): String
-    suspend fun getAllDownloadedBooks(): List<Book>
+    suspend fun getAllDownloadedBooks(): Flow<List<Book>>
 }

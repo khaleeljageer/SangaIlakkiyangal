@@ -47,14 +47,13 @@ class DownloadViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            val books = useCase.getAllDownloadedBooks()
-            delay(1000)
-
-            viewModelState.update {
-                it.copy(
-                    loading = false,
-                    books = books
-                )
+            useCase.getAllDownloadedBooks().collect { books ->
+                viewModelState.update {
+                    it.copy(
+                        loading = false,
+                        books = books
+                    )
+                }
             }
         }
     }
