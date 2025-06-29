@@ -1,12 +1,11 @@
 package com.jskaleel.sangaelakkiyangal.ui.screens.booklist
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jskaleel.sangaelakkiyangal.core.model.DownloadResult
 import com.jskaleel.sangaelakkiyangal.domain.model.Book
+import com.jskaleel.sangaelakkiyangal.domain.model.DownloadResult
 import com.jskaleel.sangaelakkiyangal.domain.usecase.BooksUseCase
 import com.jskaleel.sangaelakkiyangal.ui.utils.mutableNavigationState
 import com.jskaleel.sangaelakkiyangal.ui.utils.navigate
@@ -36,13 +35,55 @@ class BookListViewModel @Inject constructor(
             initialValue = viewModelState.value.toUiState()
         )
 
+    init {
+        observeDownloadStatus()
+    }
+
+    private fun observeDownloadStatus() {
+        viewModelScope.launch {
+            useCase.downloadStatus.collect { result ->
+                when (result) {
+                    is DownloadResult.Queued -> {
+                        updateBook(result.id) { it.copy(downloading = true) }
+                    }
+
+                    is DownloadResult.Success -> updateBook(result.id) {
+                        it.copy(
+                            downloading = false,
+                            downloaded = true,
+                            path = result.file.absolutePath
+                        )
+                    }
+
+                    is DownloadResult.Error -> updateBook(result.id) {
+                        it.copy(downloading = false)
+                    }
+
+                    is DownloadResult.Progress -> {
+                        updateBook(result.id) {
+                            it.copy(downloading = true, downloadProgress = result.percent)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun updateBook(id: String, transform: (Book) -> Book) {
+        viewModelState.update { state ->
+            val updatedBooks = state.bookList.map {
+                if (it.id == id) transform(it) else it
+            }
+            state.copy(bookList = updatedBooks)
+        }
+    }
+
     fun setup(subCategory: String) {
         viewModelState.update { state ->
             state.copy(loading = true)
         }
         viewModelScope.launch(Dispatchers.IO) {
             useCase.observeBooks(subCategory).collect { books ->
-                Log.d("Khaleel", "observeBooks: $books")
                 viewModelState.update { state ->
                     state.copy(
                         bookList = books,
@@ -56,59 +97,26 @@ class BookListViewModel @Inject constructor(
 
     fun onEvent(event: BookListEvent) {
         when (event) {
-            is BookListEvent.OnDownloadClick -> downloadBook(event.bookId)
+            is BookListEvent.OnDownloadClick -> {
+                val book = viewModelState.value.bookList.first { it.id == event.bookId }
+                if (!book.downloaded && !book.downloading) {
+                    useCase.startDownload(bookId = book.id, title = book.title, url = book.url)
+                }
+            }
+
             is BookListEvent.OnOpenClick -> {
-                navigation = navigate(BookListNavigationState.OpenBook(event.bookId))
+                val bookId = event.bookId
+                if (bookId.isBlank()) return
+                if (isBookDownloaded(bookId = bookId)) {
+                    navigation = navigate(BookListNavigationState.OpenBook(bookId))
+                }
             }
         }
     }
 
-    private fun downloadBook(bookId: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val item: Book = viewModelState.value.bookList.first { it.id == bookId }
-            useCase.downloadBook(item.id, item.url, item.title)
-                .collect { result ->
-                    when (result) {
-                        is DownloadResult.Error -> {
-//                            viewModelState.update {
-//                                it.copy(
-//                                    errorState = (result.exception.message
-//                                        ?: "").toLocalErrorState()
-//                                )
-//                            }
-                        }
-
-                        is DownloadResult.Progress -> {
-                            val items = viewModelState.value.downloadingItems.toMutableSet()
-                            items.add(result.id)
-                            viewModelState.update {
-                                it.copy(downloadingItems = items)
-                            }
-                        }
-
-                        is DownloadResult.Queued -> {
-                            val items = viewModelState.value.downloadingItems.toMutableSet()
-                            items.add(result.id)
-                            viewModelState.update {
-                                it.copy(downloadingItems = items)
-                            }
-                        }
-
-                        is DownloadResult.Success -> {
-                            val items = viewModelState.value.downloadingItems.toMutableSet()
-                            items.remove(result.id)
-                            val books = viewModelState.value.bookList.map { book ->
-                                if (book.id == result.id) {
-                                    book.copy(downloaded = true, path = result.file.path)
-                                } else book
-                            }
-                            viewModelState.update {
-                                it.copy(downloadingItems = items, bookList = books)
-                            }
-                        }
-                    }
-                }
-        }
+    private fun isBookDownloaded(bookId: String): Boolean {
+        return viewModelState.value.bookList
+            .any { it.id == bookId && it.downloaded }
     }
 }
 
@@ -116,7 +124,6 @@ private data class BookListViewModelState(
     val subCategory: String = "",
     val bookList: List<Book> = emptyList(),
     val loading: Boolean = true,
-    val downloadingItems: Set<String> = emptySet(),
 ) {
     fun toUiState(): BookListUiState {
         return if (loading) {
@@ -130,7 +137,8 @@ private data class BookListViewModelState(
                         id = it.id,
                         url = it.url,
                         downloaded = it.downloaded,
-                        progress = downloadingItems.contains(it.id)
+                        downloading = it.downloading,
+                        progress = it.downloadProgress,
                     )
                 }
             )

@@ -32,5 +32,6 @@ data class SyncStatusEntity(
 data class DownloadedBookEntity(
     @PrimaryKey val bookId: String,
     val filePath: String,
-    val title: String
+    val title: String,
+    val timestamp: Long
 )

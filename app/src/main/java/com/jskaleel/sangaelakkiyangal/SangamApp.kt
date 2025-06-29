@@ -4,7 +4,10 @@ import android.app.Application
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import coil3.request.crossfade
+import com.downloader.PRDownloader
+import com.downloader.PRDownloaderConfig
 import dagger.hilt.android.HiltAndroidApp
+
 
 @HiltAndroidApp
 class SangamApp : Application() {
@@ -15,5 +18,10 @@ class SangamApp : Application() {
                 .crossfade(true)
                 .build()
         }
+        val config = PRDownloaderConfig.newBuilder()
+            .setReadTimeout(60000)
+            .setConnectTimeout(60000)
+            .build()
+        PRDownloader.initialize(applicationContext, config)
     }
 }

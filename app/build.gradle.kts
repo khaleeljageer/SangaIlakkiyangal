@@ -87,6 +87,9 @@ dependencies {
     // Permission
     implementation(libs.accompanist.permissions)
 
+    // PRDownloader
+    implementation("com.github.amitshekhariitbhu:PRDownloader:1.0.2")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -13,6 +13,8 @@ data class Book(
     val title: String,
     val url: String,
     val id: String,
-    val downloaded: Boolean,
     val path: String,
+    val downloadProgress: Int = 0,
+    val downloading: Boolean = false,
+    val downloaded: Boolean = false
 )

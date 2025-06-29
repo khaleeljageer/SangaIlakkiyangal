@@ -56,7 +56,7 @@ interface DownloadedBookDao {
     @Query("SELECT * FROM downloaded_books WHERE bookId = :bookId")
     suspend fun get(bookId: String): DownloadedBookEntity?
 
-    @Query("SELECT * FROM downloaded_books")
+    @Query("SELECT * FROM downloaded_books ORDER BY timestamp DESC")
     fun getAll(): Flow<List<DownloadedBookEntity>>
 
     @Query("DELETE FROM downloaded_books WHERE bookId = :bookId")

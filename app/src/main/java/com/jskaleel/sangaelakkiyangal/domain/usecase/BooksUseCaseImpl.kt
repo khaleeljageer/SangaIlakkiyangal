@@ -1,13 +1,14 @@
 package com.jskaleel.sangaelakkiyangal.domain.usecase
 
-import com.jskaleel.sangaelakkiyangal.core.model.DownloadResult
 import com.jskaleel.sangaelakkiyangal.core.model.ResultState
 import com.jskaleel.sangaelakkiyangal.data.repository.BooksRepository
 import com.jskaleel.sangaelakkiyangal.data.repository.DownloadRepository
 import com.jskaleel.sangaelakkiyangal.domain.model.Book
 import com.jskaleel.sangaelakkiyangal.domain.model.Category
+import com.jskaleel.sangaelakkiyangal.domain.model.DownloadResult
 import com.jskaleel.sangaelakkiyangal.domain.model.SubCategory
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -57,14 +58,6 @@ class BooksUseCaseImpl @Inject constructor(
         }
     }
 
-    override suspend fun downloadBook(
-        id: String,
-        url: String,
-        fileName: String,
-    ): Flow<DownloadResult> {
-        return downloadRepository.downloadBook(id = id, url = url, fileName = fileName)
-    }
-
     override suspend fun getBookPath(bookId: String): String {
         return downloadRepository.getBookById(bookId)
     }
@@ -82,4 +75,15 @@ class BooksUseCaseImpl @Inject constructor(
             }
         }
     }
+
+    override fun startDownload(bookId: String, title: String, url: String) {
+        downloadRepository.startDownload(
+            bookId = bookId,
+            title = title,
+            url = url
+        )
+    }
+
+    override val downloadStatus: SharedFlow<DownloadResult>
+        get() = downloadRepository.downloadStatus
 }

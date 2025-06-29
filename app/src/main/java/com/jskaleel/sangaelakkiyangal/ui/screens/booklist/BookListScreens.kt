@@ -1,5 +1,12 @@
 package com.jskaleel.sangaelakkiyangal.ui.screens.booklist
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,9 +30,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -87,13 +97,23 @@ fun BookListItem(
     onDownloadClick: (String) -> Unit,
     onOpenClick: (String) -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        if (book.downloading) {
+            ShimmerProgressBar(
+                modifier = Modifier.matchParentSize(),
+            )
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
-                    if (book.downloaded) onOpenClick(book.id)
-                    else onDownloadClick(book.id)
+                    if (!book.downloading) {
+                        if (book.downloaded) onOpenClick(book.id)
+                        else onDownloadClick(book.id)
+                    }
                 }
                 .padding(vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -105,28 +125,34 @@ fun BookListItem(
                 color = MaterialTheme.colorScheme.onBackground
             )
 
-            if (book.progress) {
-                IconButton(
-                    onClick = {}
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .size(30.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
-            } else {
-                IconButton(
-                    onClick = {
-                        if (book.downloaded) onOpenClick(book.id)
-                        else onDownloadClick(book.id)
+            when {
+                book.downloading -> {
+                    IconButton(
+                        onClick = {}
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .size(30.dp),
+                            strokeWidth = 2.dp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
                     }
-                ) {
-                    Icon(
-                        imageVector = if (book.downloaded) Icons.AutoMirrored.Rounded.MenuBook else Icons.Rounded.Download,
-                        contentDescription = if (book.downloaded) "Open Book" else "Download Book"
-                    )
+                }
+
+                else -> {
+                    IconButton(
+                        onClick = {
+                            if (!book.downloading) {
+                                if (book.downloaded) onOpenClick(book.id)
+                                else onDownloadClick(book.id)
+                            }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = if (book.downloaded) Icons.AutoMirrored.Rounded.MenuBook else Icons.Rounded.Download,
+                            contentDescription = if (book.downloaded) "Open Book" else "Download Book"
+                        )
+                    }
                 }
             }
         }
@@ -138,14 +164,50 @@ fun BookListItem(
     )
 }
 
+@Composable
+private fun ShimmerProgressBar(
+    modifier: Modifier = Modifier,
+) {
+    val transition = rememberInfiniteTransition(label = "shimmer")
+
+    val shimmerX by transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1000f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 2000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "shimmer-x"
+    )
+
+    val shimmerBrush = Brush.linearGradient(
+        colors = listOf(
+            MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+            MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+            MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+        ),
+        start = Offset.Zero,
+        end = Offset(shimmerX, shimmerX)
+    )
+
+    Box(
+        modifier = modifier.then(
+            Modifier
+                .fillMaxSize()
+                .background(shimmerBrush)
+        )
+    )
+}
+
 
 @Immutable
 data class BookUiModel(
     val title: String,
     val id: String,
     val url: String,
+    val progress: Int = 0,
     val downloaded: Boolean,
-    val progress: Boolean,
+    val downloading: Boolean,
 )
 
 @Preview(showBackground = true)
@@ -158,14 +220,15 @@ private fun BookListScreenContentPreview() {
                 id = "1",
                 url = "url1",
                 downloaded = false,
-                progress = false
+                downloading = false
             ),
             BookUiModel(
                 title = "Book 2",
                 id = "2",
                 url = "url2",
-                downloaded = true,
-                progress = true,
+                downloaded = false,
+                downloading = true,
+                progress = 50
             )
         )
         BookListScreenContent(
