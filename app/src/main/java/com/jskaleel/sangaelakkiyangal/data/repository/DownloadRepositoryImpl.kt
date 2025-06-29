@@ -27,12 +27,12 @@ class DownloadRepositoryImpl @Inject constructor(
     private val lastProgressMap = mutableMapOf<String, Int>()
 
     override fun startDownload(bookId: String, title: String, url: String) {
-        val file = File(getDownloadDir(), "$bookId.pdf")
+        val file = File(getDownloadDir(), "$title.pdf")
 
         PRDownloader.download(
             url,
             file.parent,
-            title
+            "$title.pdf"
         ).build()
             .setOnStartOrResumeListener {
                 emitStatus(DownloadResult.Queued(bookId))

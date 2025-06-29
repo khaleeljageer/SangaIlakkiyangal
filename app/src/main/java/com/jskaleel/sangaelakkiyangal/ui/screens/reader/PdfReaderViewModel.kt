@@ -1,6 +1,5 @@
 package com.jskaleel.sangaelakkiyangal.ui.screens.reader
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jskaleel.sangaelakkiyangal.domain.usecase.BooksUseCase
@@ -13,6 +12,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.File
 
 @HiltViewModel
 class PdfReaderViewModel @Inject constructor(
@@ -33,9 +33,8 @@ class PdfReaderViewModel @Inject constructor(
         }
         viewModelScope.launch {
             delay(2000)
-            Log.d("Khaleel", "bookId: $bookId")
             val filePath = useCase.getBookPath(bookId)
-            Log.d("Khaleel", "filePath: $filePath")
+            val file = File(filePath)
             viewModelState.update {
                 it.copy(
                     path = filePath,

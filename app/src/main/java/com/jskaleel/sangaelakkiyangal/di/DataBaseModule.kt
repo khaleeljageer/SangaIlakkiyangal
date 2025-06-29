@@ -24,6 +24,6 @@ class DataBaseModule {
     }
 
     companion object {
-        private const val APP_DATABASE_NAME = "sanga_elakkiyangal.db"
+        private const val APP_DATABASE_NAME = "sangam_app.db"
     }
 }

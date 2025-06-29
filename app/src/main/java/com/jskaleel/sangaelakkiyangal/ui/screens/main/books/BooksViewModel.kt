@@ -45,9 +45,7 @@ class BooksViewModel @Inject constructor(
     private fun observeSubCategories(categories: List<Category>) {
         categories.forEach { category ->
             viewModelScope.launch(Dispatchers.IO) {
-                Log.d("Khaleel", "category: $category")
                 useCase.observeSubCategories(category.title).collect { result ->
-                    Log.d("Khaleel", "Result: $result")
                     viewModelState.update { current ->
                         current.copy(
                             categories = current.categories.map { item ->
@@ -65,7 +63,6 @@ class BooksViewModel @Inject constructor(
     private fun observeCategories() {
         viewModelScope.launch(Dispatchers.IO) {
             useCase.observeCategories().collect { categories ->
-                Log.d("Khaleel", "categories: $categories")
                 viewModelState.update { current ->
                     current.copy(
                         loading = false,

@@ -11,7 +11,6 @@ import com.jskaleel.sangaelakkiyangal.ui.utils.mutableNavigationState
 import com.jskaleel.sangaelakkiyangal.ui.utils.navigate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -41,6 +40,17 @@ class DownloadViewModel @Inject constructor(
         when (event) {
             is DownloadEvent.OnBookClick -> {
                 navigation = navigate(OpenBook(id = event.id))
+            }
+
+            is DownloadEvent.OnExternalReaderClick -> {
+                val book = viewModelState.value.books.first { it.id == event.bookId }
+                navigation = navigate(DownloadNavigationState.ExternalReader(book.path))
+            }
+
+            is DownloadEvent.OnInternalReaderClick -> {
+                val bookId = event.bookId
+                if (bookId.isBlank()) return
+                navigation = navigate(DownloadNavigationState.InternalReader(bookId))
             }
         }
     }
@@ -90,8 +100,12 @@ sealed interface DownloadUiState {
 
 sealed interface DownloadNavigationState {
     data class OpenBook(val id: String) : DownloadNavigationState
+    data class InternalReader(val id: String) : DownloadNavigationState
+    data class ExternalReader(val path: String) : DownloadNavigationState
 }
 
 sealed interface DownloadEvent {
     data class OnBookClick(val id: String) : DownloadEvent
+    data class OnInternalReaderClick(val bookId: String) : DownloadEvent
+    data class OnExternalReaderClick(val bookId: String) : DownloadEvent
 }

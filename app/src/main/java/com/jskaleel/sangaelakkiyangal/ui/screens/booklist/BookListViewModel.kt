@@ -111,6 +111,19 @@ class BookListViewModel @Inject constructor(
                     navigation = navigate(BookListNavigationState.OpenBook(bookId))
                 }
             }
+
+            is BookListEvent.OnExternalReaderClick -> {
+                val book = viewModelState.value.bookList.first { it.id == event.bookId }
+                navigation = navigate(BookListNavigationState.ExternalReader(book.path))
+            }
+
+            is BookListEvent.OnInternalReaderClick -> {
+                val bookId = event.bookId
+                if (bookId.isBlank()) return
+                if (isBookDownloaded(bookId = bookId)) {
+                    navigation = navigate(BookListNavigationState.InternalReader(bookId))
+                }
+            }
         }
     }
 
@@ -156,9 +169,13 @@ sealed interface BookListUiState {
 
 sealed interface BookListNavigationState {
     data class OpenBook(val id: String) : BookListNavigationState
+    data class InternalReader(val id: String) : BookListNavigationState
+    data class ExternalReader(val path: String) : BookListNavigationState
 }
 
 sealed interface BookListEvent {
     data class OnDownloadClick(val bookId: String) : BookListEvent
     data class OnOpenClick(val bookId: String) : BookListEvent
+    data class OnInternalReaderClick(val bookId: String) : BookListEvent
+    data class OnExternalReaderClick(val bookId: String) : BookListEvent
 }
