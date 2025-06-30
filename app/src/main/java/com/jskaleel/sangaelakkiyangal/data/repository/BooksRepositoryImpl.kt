@@ -1,6 +1,5 @@
 package com.jskaleel.sangaelakkiyangal.data.repository
 
-import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import com.jskaleel.sangaelakkiyangal.core.model.NO_INTERNET_ERROR_CODE
@@ -13,7 +12,6 @@ import com.jskaleel.sangaelakkiyangal.data.source.local.entity.SubCategoryEntity
 import com.jskaleel.sangaelakkiyangal.data.source.local.entity.SyncStatusEntity
 import com.jskaleel.sangaelakkiyangal.data.source.remote.ApiService
 import com.jskaleel.sangaelakkiyangal.data.source.remote.NetworkManager
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -21,7 +19,7 @@ class BooksRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
     private val networkManager: NetworkManager,
     private val booksDb: BooksDatabase,
-    @ApplicationContext private val context: Context,
+    private val connectivityManager: ConnectivityManager,
 ) : BooksRepository {
     override suspend fun syncIfNeeded(): ResultState<Unit> {
         val lastStatus = booksDb.syncStatusDao().getStatus()
@@ -42,11 +40,11 @@ class BooksRepositoryImpl @Inject constructor(
     }
 
     private suspend fun syncAll(): ResultState<Unit> {
-        return when (val result = networkManager.safeApiCall { apiService.fetchCategories() }) {
-            is ResultState.Error -> result
+        return when (val categoryResult = networkManager.safeApiCall { apiService.fetchCategories() }) {
+            is ResultState.Error -> categoryResult
 
             is ResultState.Success -> {
-                val categories = result.data
+                val categories = categoryResult.data
                 booksDb.categoryDao().insertAll(categories.map { CategoryEntity(it.label) })
 
                 val allSuccess = categories.all { category ->
@@ -110,7 +108,6 @@ class BooksRepositoryImpl @Inject constructor(
     }
 
     private fun isNetworkAvailable(): Boolean {
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         return connectivityManager.activeNetwork?.let { network ->
             connectivityManager.getNetworkCapabilities(network)
                 ?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)

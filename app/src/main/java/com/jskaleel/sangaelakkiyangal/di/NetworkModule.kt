@@ -1,9 +1,13 @@
 package com.jskaleel.sangaelakkiyangal.di
 
+import android.content.Context
+import android.net.ConnectivityManager
+import androidx.core.content.getSystemService
 import com.jskaleel.sangaelakkiyangal.data.source.remote.ApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -39,6 +43,12 @@ class NetworkModule {
     @Singleton
     fun provideApiService(retrofit: Retrofit): ApiService {
         return retrofit.create(ApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideConnectivityManager(@ApplicationContext context: Context): ConnectivityManager {
+        return context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     }
 
     companion object {

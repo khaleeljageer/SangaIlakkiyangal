@@ -23,12 +23,5 @@ suspend fun <I, O> ResultState<I>.map(responseProvider: ResultMapper<I, O>): Res
     }
 }
 
-fun <T> ResultState<T>.getOrNull(): T? {
-    return when (this) {
-        is ResultState.Success -> data
-        is ResultState.Error -> null
-    }
-}
-
 const val NO_INTERNET_ERROR_CODE = 1
 const val UNKNOWN_ERROR_CODE = 2
