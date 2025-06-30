@@ -80,13 +80,15 @@ private data class DownloadViewModelState(
             if (books.isEmpty()) {
                 DownloadUiState.Empty
             } else {
-                DownloadUiState.Success(books = books.map {
-                    BookUiModel(
-                        id = it.id,
-                        title = it.title,
-                        downloaded = it.downloaded
-                    )
-                })
+                DownloadUiState.Success(
+                    books = books.map {
+                        BookUiModel(
+                            id = it.id,
+                            title = it.title,
+                            downloaded = it.downloaded
+                        )
+                    }
+                )
             }
         }
     }

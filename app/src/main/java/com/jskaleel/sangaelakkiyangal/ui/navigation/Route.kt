@@ -8,7 +8,7 @@ sealed class Screen(val route: String) {
     }
 
     data object BookList : Screen("book_list") {
-        object Link {
+        object Nav {
             private const val SUB_CATEGORY = "sub_category"
             val link = "$route/{$SUB_CATEGORY}"
             fun create(subCategory: String): String {
@@ -22,7 +22,7 @@ sealed class Screen(val route: String) {
     }
 
     data object PdfReader : Screen("pdf_reader") {
-        object Link {
+        object Nav {
             private const val BOOK_ID = "book_id"
             val link = "$route/{$BOOK_ID}"
 

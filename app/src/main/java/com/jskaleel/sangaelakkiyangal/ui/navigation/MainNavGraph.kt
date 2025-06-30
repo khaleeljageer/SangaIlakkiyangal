@@ -26,7 +26,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             BooksScreenRoute(
                 onNext = {
                     navController.navigate(
-                        Screen.BookList.Link.create(it)
+                        Screen.BookList.Nav.create(it)
                     )
                 },
                 viewModel = viewModel
@@ -39,7 +39,7 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             DownloadScreenRoute(
                 openBook = { id ->
                     navController.navigate(
-                        Screen.PdfReader.Link.create(bookId = id)
+                        Screen.PdfReader.Nav.create(bookId = id)
                     )
                 },
                 viewModel = viewModel
@@ -50,10 +50,10 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
             AboutScreenRoute()
         }
 
-        animatedComposable(route = Screen.BookList.Link.link) { entry ->
+        animatedComposable(route = Screen.BookList.Nav.link) { entry ->
             val viewModel: BookListViewModel = hiltViewModel()
             InvokeOnce {
-                val subCategory = Screen.BookList.Link.get(entry.arguments)
+                val subCategory = Screen.BookList.Nav.get(entry.arguments)
                 viewModel.setup(subCategory)
             }
             BookListScreenRoute(
@@ -61,19 +61,18 @@ fun NavGraphBuilder.mainNavGraph(navController: NavController) {
                 onBack = { navController.popBackStack() },
                 openBook = { id ->
                     navController.navigate(
-                        Screen.PdfReader.Link.create(bookId = id)
+                        Screen.PdfReader.Nav.create(bookId = id)
                     )
                 }
             )
         }
-        animatedComposable(route = Screen.PdfReader.Link.link) { entry ->
+        animatedComposable(route = Screen.PdfReader.Nav.link) { entry ->
             val viewModel: PdfReaderViewModel = hiltViewModel()
             InvokeOnce {
-                val bookId = Screen.PdfReader.Link.get(entry.arguments)
+                val bookId = Screen.PdfReader.Nav.get(entry.arguments)
                 viewModel.setup(bookId)
             }
             PdfReaderScreenRoute(
-                onBack = { navController.popBackStack() },
                 viewModel = viewModel
             )
         }

@@ -38,7 +38,7 @@ class DownloadRepositoryImpl @Inject constructor(
                 emitStatus(DownloadResult.Queued(bookId))
             }
             .setOnProgressListener { progress ->
-                val percent = (progress.currentBytes * 100 / progress.totalBytes).toInt()
+                val percent = (progress.currentBytes * PERCENT_BASE / progress.totalBytes).toInt()
                 emitStatus(DownloadResult.Progress(bookId, percent))
             }
             .start(object : OnDownloadListener {
@@ -94,5 +94,9 @@ class DownloadRepositoryImpl @Inject constructor(
 
     override suspend fun getBookById(bookId: String): String {
         return database.downloadedBookDao().get(bookId)?.filePath ?: ""
+    }
+
+    companion object {
+        private const val PERCENT_BASE = 100
     }
 }

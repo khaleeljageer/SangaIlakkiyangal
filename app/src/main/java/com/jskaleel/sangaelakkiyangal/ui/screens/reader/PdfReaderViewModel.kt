@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.io.File
 
 @HiltViewModel
 class PdfReaderViewModel @Inject constructor(
@@ -23,7 +22,7 @@ class PdfReaderViewModel @Inject constructor(
     val uiState = viewModelState.map { it.toUiState() }
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
+            started = SharingStarted.WhileSubscribed(STOP_TIMEOUT),
             initialValue = viewModelState.value.toUiState()
         )
 
@@ -32,9 +31,8 @@ class PdfReaderViewModel @Inject constructor(
             it.copy(loading = true)
         }
         viewModelScope.launch {
-            delay(2000)
+            delay(DELAY)
             val filePath = useCase.getBookPath(bookId)
-            val file = File(filePath)
             viewModelState.update {
                 it.copy(
                     path = filePath,
@@ -42,6 +40,11 @@ class PdfReaderViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    companion object {
+        private const val STOP_TIMEOUT = 5000L
+        private const val DELAY = 2000L
     }
 }
 

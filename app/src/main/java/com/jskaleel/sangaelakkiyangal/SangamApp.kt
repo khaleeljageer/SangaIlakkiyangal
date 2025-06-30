@@ -18,9 +18,14 @@ class SangamApp : Application() {
                 .build()
         }
         val config = PRDownloaderConfig.newBuilder()
-            .setReadTimeout(60000)
-            .setConnectTimeout(60000)
+            .setReadTimeout(READ_TIMEOUT)
+            .setConnectTimeout(CONNECT_TIMEOUT)
             .build()
         PRDownloader.initialize(applicationContext, config)
+    }
+
+    companion object {
+        private const val READ_TIMEOUT = 60000
+        private const val CONNECT_TIMEOUT = 60000
     }
 }

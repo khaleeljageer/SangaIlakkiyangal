@@ -50,12 +50,17 @@ class BooksRepositoryImpl @Inject constructor(
                 booksDb.categoryDao().insertAll(categories.map { CategoryEntity(it.label) })
 
                 val allSuccess = categories.all { category ->
-                    when (val subResult = networkManager.safeApiCall {
-                        apiService.fetchSubCategories(category.books)
-                    }) {
+                    when (
+                        val subResult = networkManager.safeApiCall {
+                            apiService.fetchSubCategories(category.books)
+                        }
+                    ) {
                         is ResultState.Success -> {
                             val subEntities = subResult.data.map {
-                                SubCategoryEntity(title = it.title, categoryTitle = category.label)
+                                SubCategoryEntity(
+                                    title = it.title,
+                                    categoryTitle = category.label
+                                )
                             }
                             booksDb.subCategoryDao().insertAll(subEntities)
 
@@ -105,11 +110,11 @@ class BooksRepositoryImpl @Inject constructor(
     }
 
     private fun isNetworkAvailable(): Boolean {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val network = connectivityManager.activeNetwork ?: return false
-        val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
-        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        return connectivityManager.activeNetwork?.let { network ->
+            connectivityManager.getNetworkCapabilities(network)
+                ?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        } ?: false
     }
 
     companion object {
