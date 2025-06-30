@@ -62,7 +62,7 @@ fun DownloadScreenRoute(
 
     ProvideAppBarTitle {
         Text(
-            text = stringResource(R.string.ta_app_name),
+            text = stringResource(R.string.downloads),
             fontFamily = fontFamily,
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.titleMedium,
