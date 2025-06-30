@@ -6,8 +6,6 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
@@ -20,29 +18,25 @@ fun NavGraphBuilder.animatedComposable(
     route: String,
     arguments: List<NamedNavArgument> = emptyList(),
     deepLinks: List<NavDeepLink> = emptyList(),
-    enter: (@JvmSuppressWildcards
-    AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition?)? = {
+    enter: (@JvmSuppressWildcards AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition?)? = {
         slideIntoContainer(
             towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
             animationSpec = tween(ANIMATION_DURATION)
         )
     },
-    exit: (@JvmSuppressWildcards
-    AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition?)? = {
+    exit: (@JvmSuppressWildcards AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition?)? = {
         slideOutOfContainer(
             towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
             animationSpec = tween(ANIMATION_DURATION)
         )
     },
-    popEnter: (@JvmSuppressWildcards
-    AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition?)? = {
+    popEnter: (@JvmSuppressWildcards AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition?)? = {
         slideIntoContainer(
             towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
             animationSpec = tween(ANIMATION_DURATION)
         )
     },
-    popExit: (@JvmSuppressWildcards
-    AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition?)? = {
+    popExit: (@JvmSuppressWildcards AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition?)? = {
         slideOutOfContainer(
             towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
             animationSpec = tween(ANIMATION_DURATION)

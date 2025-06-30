@@ -1,7 +1,7 @@
 package com.jskaleel.sangaelakkiyangal.data.repository
 
-import com.jskaleel.sangaelakkiyangal.domain.model.DownloadResult
 import com.jskaleel.sangaelakkiyangal.data.source.local.entity.DownloadedBookEntity
+import com.jskaleel.sangaelakkiyangal.domain.model.DownloadResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 

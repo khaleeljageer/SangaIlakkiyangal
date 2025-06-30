@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.hiltAndroid)
     alias(libs.plugins.googleServices) apply false
     alias(libs.plugins.crashlytics) apply false
+    alias(libs.plugins.detekt.android)
     id("androidx.navigation.safeargs.kotlin")
 }
 
@@ -32,19 +33,49 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
     kotlinOptions {
         jvmTarget = "17"
     }
+
     buildFeatures {
         compose = true
         buildConfig = true
     }
+
     ksp {
         arg("room.schemaLocation", "$projectDir/schemas")
+    }
+
+    detekt {
+        toolVersion = libs.versions.detekt.get()
+        config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
+        buildUponDefaultConfig = true
+
+        source.setFrom(
+            files("src/main/java", "src/main/kotlin")
+        )
+        parallel = false
+    }
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    reports {
+        html.required.set(true)
+        html.outputLocation.set(file("$rootDir/reports/detekt/detekt-report.html"))
+
+        xml.required.set(true)
+        xml.outputLocation.set(file("$rootDir/reports/detekt/detekt-report.xml"))
+
+        txt.required.set(false)
+
+        sarif.required.set(true)
+        sarif.outputLocation.set(file("$rootDir/reports/detekt/detekt-report.sarif"))
     }
 }
 
@@ -105,4 +136,5 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    detektPlugins(libs.detekt.formatting)
 }

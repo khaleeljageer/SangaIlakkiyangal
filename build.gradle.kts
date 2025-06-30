@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.hiltAndroid) apply false
     alias(libs.plugins.googleServices) apply false
     alias(libs.plugins.crashlytics) apply false
+    alias(libs.plugins.detekt.android) apply false
 }
 
 buildscript {
