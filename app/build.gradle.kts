@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hiltAndroid)
+    alias(libs.plugins.googleServices) apply false
+    alias(libs.plugins.crashlytics) apply false
     id("androidx.navigation.safeargs.kotlin")
 }
 
@@ -15,8 +17,8 @@ android {
         applicationId = "com.jskaleel.sangaelakkiyangal"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 100
+        versionName = "3.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -89,7 +91,12 @@ dependencies {
     implementation(libs.accompanist.permissions)
 
     // PRDownloader
-    implementation("com.github.amitshekhariitbhu:PRDownloader:1.0.2")
+    implementation(libs.prdownloader)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
