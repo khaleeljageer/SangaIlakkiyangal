@@ -51,7 +51,9 @@ class BooksViewModel @Inject constructor(
                             categories = current.categories.map { item ->
                                 if (item.title == category.title) {
                                     item.copy(subCategories = result)
-                                } else item
+                                } else {
+                                    item
+                                }
                             }
                         )
                     }
@@ -88,7 +90,11 @@ class BooksViewModel @Inject constructor(
         when (event) {
             is BooksEvent.OnCategoryToggle -> {
                 viewModelState.update { state ->
-                    val newToggleIndex = if (state.toggleIndex == event.index) -1 else event.index
+                    val newToggleIndex = if (state.toggleIndex == event.index) {
+                        -1
+                    } else {
+                        event.index
+                    }
                     state.copy(toggleIndex = newToggleIndex)
                 }
             }

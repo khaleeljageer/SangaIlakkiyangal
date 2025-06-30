@@ -8,7 +8,6 @@ import com.downloader.PRDownloader
 import com.downloader.PRDownloaderConfig
 import dagger.hilt.android.HiltAndroidApp
 
-
 @HiltAndroidApp
 class SangamApp : Application() {
     override fun onCreate() {

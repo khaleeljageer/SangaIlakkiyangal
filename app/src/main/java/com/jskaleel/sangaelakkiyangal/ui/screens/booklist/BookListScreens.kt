@@ -98,8 +98,7 @@ fun BookListItem(
     onOpenClick: (String) -> Unit
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         if (book.downloading) {
             ShimmerProgressBar(
@@ -111,8 +110,11 @@ fun BookListItem(
                 .fillMaxWidth()
                 .clickable {
                     if (!book.downloading) {
-                        if (book.downloaded) onOpenClick(book.id)
-                        else onDownloadClick(book.id)
+                        if (book.downloaded) {
+                            onOpenClick(book.id)
+                        } else {
+                            onDownloadClick(book.id)
+                        }
                     }
                 }
                 .padding(vertical = 12.dp),
@@ -127,12 +129,9 @@ fun BookListItem(
 
             when {
                 book.downloading -> {
-                    IconButton(
-                        onClick = {}
-                    ) {
+                    IconButton(onClick = {}) {
                         CircularProgressIndicator(
-                            modifier = Modifier
-                                .size(30.dp),
+                            modifier = Modifier.size(30.dp),
                             strokeWidth = 2.dp,
                             color = MaterialTheme.colorScheme.primary
                         )
@@ -140,18 +139,20 @@ fun BookListItem(
                 }
 
                 else -> {
-                    IconButton(
-                        onClick = {
-                            if (!book.downloading) {
-                                if (book.downloaded) onOpenClick(book.id)
-                                else onDownloadClick(book.id)
-                            }
+                    if (book.downloaded) {
+                        IconButton(onClick = { onOpenClick(book.id) }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Rounded.MenuBook,
+                                contentDescription = "Open Book"
+                            )
                         }
-                    ) {
-                        Icon(
-                            imageVector = if (book.downloaded) Icons.AutoMirrored.Rounded.MenuBook else Icons.Rounded.Download,
-                            contentDescription = if (book.downloaded) "Open Book" else "Download Book"
-                        )
+                    } else {
+                        IconButton(onClick = { onDownloadClick(book.id) }) {
+                            Icon(
+                                imageVector = Icons.Rounded.Download,
+                                contentDescription = "Download Book"
+                            )
+                        }
                     }
                 }
             }
@@ -174,7 +175,10 @@ private fun ShimmerProgressBar(
         initialValue = 0f,
         targetValue = 1000f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 2000, easing = FastOutSlowInEasing),
+            animation = tween(
+                durationMillis = 2000,
+                easing = FastOutSlowInEasing
+            ),
             repeatMode = RepeatMode.Restart
         ),
         label = "shimmer-x"
