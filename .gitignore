@@ -48,6 +48,9 @@ captures/
 .idea/runConfigurations.xml
 .idea/inspectionProfiles/
 .idea/inspectionProfiles/Project_Default.xml
+.idea/deploymentTargetSelector.xml
+.idea/appInsightsSettings.xml
+.idea/detekt.xml
 
 .DS_Store
 
