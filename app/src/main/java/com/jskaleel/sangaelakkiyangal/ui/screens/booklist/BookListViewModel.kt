@@ -100,6 +100,12 @@ class BookListViewModel @Inject constructor(
             is BookListEvent.OnDownloadClick -> {
                 val book = viewModelState.value.bookList.first { it.id == event.bookId }
                 if (!book.downloaded && !book.downloading) {
+                    updateBook(book.id) {
+                        it.copy(
+                            downloading = true,
+                            downloadProgress = 0
+                        )
+                    }
                     useCase.startDownload(bookId = book.id, title = book.title, url = book.url)
                 }
             }
