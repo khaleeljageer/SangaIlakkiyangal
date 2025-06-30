@@ -1,6 +1,5 @@
 package com.jskaleel.sangaelakkiyangal.ui.navigation
 
-
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition

@@ -16,7 +16,6 @@ private val LightColorScheme = lightColorScheme(
     onSecondary = Color(0xFF3B2C1A)    // Darker brown for text on gold
 )
 
-
 @Composable
 fun AppTheme(
     content: @Composable () -> Unit

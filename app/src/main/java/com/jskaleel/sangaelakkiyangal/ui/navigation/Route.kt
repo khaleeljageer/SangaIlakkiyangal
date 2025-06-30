@@ -2,7 +2,6 @@ package com.jskaleel.sangaelakkiyangal.ui.navigation
 
 import android.os.Bundle
 
-
 sealed class Screen(val route: String) {
     object Welcome {
         data object AboutApp : Screen("welcome_about_app")
@@ -13,7 +12,7 @@ sealed class Screen(val route: String) {
             private const val SUB_CATEGORY = "sub_category"
             val link = "$route/{$SUB_CATEGORY}"
             fun create(subCategory: String): String {
-                return "$route/${subCategory}"
+                return "$route/$subCategory"
             }
 
             fun get(bundle: Bundle?): String {
@@ -28,7 +27,7 @@ sealed class Screen(val route: String) {
             val link = "$route/{$BOOK_ID}"
 
             fun create(bookId: String): String {
-                return "$route/${bookId}"
+                return "$route/$bookId"
             }
 
             fun get(bundle: Bundle?): String {

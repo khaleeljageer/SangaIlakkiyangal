@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.jskaleel.sangaelakkiyangal.ui.theme.AppTheme
 
-
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun WelcomeScreenContent(

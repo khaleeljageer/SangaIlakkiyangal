@@ -18,7 +18,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.jskaleel.sangaelakkiyangal.ui.navigation.Screen
 
-
 val topBarItems = listOf(
     Screen.Main.Home,
     Screen.Main.Download,

@@ -15,7 +15,6 @@ import com.jskaleel.sangaelakkiyangal.ui.screens.reader.PdfReaderScreenRoute
 import com.jskaleel.sangaelakkiyangal.ui.screens.reader.PdfReaderViewModel
 import com.jskaleel.sangaelakkiyangal.ui.utils.InvokeOnce
 
-
 fun NavGraphBuilder.mainNavGraph(navController: NavController) {
     navigation(
         startDestination = Screen.Main.Home.route,

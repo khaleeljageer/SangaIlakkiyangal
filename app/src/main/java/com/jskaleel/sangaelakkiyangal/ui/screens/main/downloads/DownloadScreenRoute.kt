@@ -69,7 +69,6 @@ fun DownloadScreenRoute(
         )
     }
 
-
     when (val state = uiState) {
         DownloadUiState.Loading -> FullScreenLoader()
         DownloadUiState.Empty -> DownloadEmptyScreen()

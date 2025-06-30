@@ -85,7 +85,6 @@ fun DownloadEmptyScreen() {
     }
 }
 
-
 @Composable
 private fun BookListItem(
     book: BookUiModel,

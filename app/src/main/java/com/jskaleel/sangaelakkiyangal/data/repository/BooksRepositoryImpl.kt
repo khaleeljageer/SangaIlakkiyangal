@@ -13,7 +13,6 @@ import com.jskaleel.sangaelakkiyangal.data.source.local.entity.SubCategoryEntity
 import com.jskaleel.sangaelakkiyangal.data.source.local.entity.SyncStatusEntity
 import com.jskaleel.sangaelakkiyangal.data.source.remote.ApiService
 import com.jskaleel.sangaelakkiyangal.data.source.remote.NetworkManager
-import com.jskaleel.sangaelakkiyangal.domain.model.Book
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

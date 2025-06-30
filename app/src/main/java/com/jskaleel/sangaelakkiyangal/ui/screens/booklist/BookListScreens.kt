@@ -203,7 +203,6 @@ private fun ShimmerProgressBar(
     )
 }
 
-
 @Immutable
 data class BookUiModel(
     val title: String,

@@ -133,7 +133,7 @@ private fun ExpandableCategorySection(
             Icon(
                 imageVector = if (category.isExpanded) {
                     Icons.Rounded.ExpandLess
-                }else {
+                } else {
                     Icons.Rounded.ExpandMore
                 },
                 contentDescription = null

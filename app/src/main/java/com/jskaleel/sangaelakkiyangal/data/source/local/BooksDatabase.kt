@@ -14,11 +14,13 @@ import com.jskaleel.sangaelakkiyangal.data.source.local.entity.SubCategoryEntity
 import com.jskaleel.sangaelakkiyangal.data.source.local.entity.SyncStatusEntity
 
 @Database(
-    entities = [CategoryEntity::class,
+    entities = [
+        CategoryEntity::class,
         SubCategoryEntity::class,
         SyncStatusEntity::class,
         DownloadedBookEntity::class,
-        BookEntity::class],
+        BookEntity::class
+    ],
     version = 2,
     exportSchema = true
 )

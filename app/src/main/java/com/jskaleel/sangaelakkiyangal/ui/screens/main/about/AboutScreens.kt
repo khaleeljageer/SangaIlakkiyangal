@@ -20,11 +20,9 @@ import com.jskaleel.sangaelakkiyangal.ui.theme.AppTheme
 import com.jskaleel.sangaelakkiyangal.ui.theme.fontFamily
 import com.jskaleel.sangaelakkiyangal.ui.utils.ProvideAppBarTitle
 
-
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun AboutScreenContent() {
-
     ProvideAppBarTitle {
         Text(
             text = stringResource(R.string.ta_app_name),
