@@ -12,8 +12,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jskaleel.sangaelakkiyangal.R
 import com.jskaleel.sangaelakkiyangal.core.StringCallBack
-import com.jskaleel.sangaelakkiyangal.ui.screens.booklist.BookListEvent
-import com.jskaleel.sangaelakkiyangal.ui.screens.booklist.BookListNavigationState
 import com.jskaleel.sangaelakkiyangal.ui.screens.booklist.openExternalReader
 import com.jskaleel.sangaelakkiyangal.ui.screens.common.FullScreenLoader
 import com.jskaleel.sangaelakkiyangal.ui.screens.common.OpenReaderDialog
@@ -72,8 +70,7 @@ fun DownloadScreenRoute(
     }
 
 
-    val state = uiState
-    when (state) {
+    when (val state = uiState) {
         DownloadUiState.Loading -> FullScreenLoader()
         DownloadUiState.Empty -> DownloadEmptyScreen()
         is DownloadUiState.Success -> {
