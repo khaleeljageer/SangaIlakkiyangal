@@ -13,6 +13,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.jskaleel.sangaelakkiyangal.ui.utils.bottomBarMenuRoutes
 
+@Suppress("detekt:LongParameterList")
 fun NavGraphBuilder.animatedComposable(
     route: String,
     arguments: List<NamedNavArgument> = emptyList(),
