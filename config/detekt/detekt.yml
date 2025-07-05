@@ -796,6 +796,4 @@ style:
       - 'java.util.*'
       - 'androidx.compose.foundation.layout.*'
       - 'androidx.compose.runtime.*'
-      - 'com.remitbee.app.app.ui.components.*'
-      - 'com.remitbee.app.app.core.model.*'
       - 'kotlinx.coroutines.flow.*'
